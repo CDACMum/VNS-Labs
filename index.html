@@ -7,6 +7,14 @@
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&family=Syne:wght@700;800&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<!-- Prism syntax highlighting -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.css" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-java.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.js"></script>
+
 <style>
 :root {
   --bg: #0a0e1a;
@@ -226,7 +234,81 @@ tbody tr:last-child{border-bottom:none}
 .q-num-badge{background:linear-gradient(135deg,#4f8ef7,#a855f7);color:#fff;width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex-shrink:0;margin-top:2px}
 .q-meta{display:flex;gap:6px;margin-bottom:8px}
 .q-text{font-size:15px;font-weight:500;line-height:1.6;color:var(--text)}
-.q-code{font-family:'JetBrains Mono',monospace;background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);padding:14px 16px;margin:12px 0;font-size:13px;overflow-x:auto;color:#e2e8f0;line-height:1.5}
+/* ── CODE BLOCK ── */
+.q-code-wrapper {
+  margin: 12px 0;
+  border-radius: var(--r2);
+  overflow: hidden;
+  border: 1px solid #2d3748;
+  background: #0d1117;
+}
+.q-code-bar {
+  background: #161b22;
+  padding: 7px 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #2d3748;
+}
+.q-code-lang {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--accent2);
+  font-family: 'JetBrains Mono', monospace;
+  letter-spacing: 0.5px;
+}
+.q-code-linecnt {
+  font-size: 10px;
+  color: #4a5568;
+  font-family: 'JetBrains Mono', monospace;
+}
+.q-code-body {
+  display: flex;
+  overflow-x: auto;
+}
+.q-code-nums {
+  background: #0d1117;
+  padding: 14px 0;
+  min-width: 44px;
+  border-right: 1px solid #2d3748;
+  user-select: none;
+  flex-shrink: 0;
+}
+.q-code-nums span {
+  display: block;
+  padding: 0 12px;
+  font-size: 12px;
+  line-height: 1.7;
+  color: #4a5568;
+  font-family: 'JetBrains Mono', monospace;
+  text-align: right;
+}
+.q-code {
+  font-family: 'JetBrains Mono', monospace;
+  background: transparent !important;
+  border: none !important;
+  border-radius: 0 !important;
+  padding: 14px 18px !important;
+  margin: 0 !important;
+  font-size: 13px;
+  color: #e2e8f0;
+  line-height: 1.7;
+  white-space: pre;
+  flex: 1;
+  min-width: 0;
+  overflow-x: visible;
+}
+.q-code code {
+  font-family: inherit;
+  background: transparent;
+  padding: 0;
+  color: inherit;
+}
+/* Override Prism tomorrow theme bg so our wrapper bg shows */
+code[class*="language-"], pre[class*="language-"] {
+  background: transparent !important;
+  text-shadow: none !important;
+}
 .options-list{display:flex;flex-direction:column;gap:10px;margin-top:16px}
 .opt-item{display:flex;align-items:center;gap:12px;padding:13px 16px;background:var(--bg2);border:2px solid var(--border);border-radius:var(--r2);cursor:pointer;transition:all 0.15s}
 .opt-item:hover{border-color:var(--border2);background:var(--card2)}
@@ -1906,7 +1988,7 @@ function parseWQJson() {
   preview.innerHTML = results.map(r => `
     <div class="wq-preview-card ${r._valid?'valid':'invalid'}">
       ${!r._valid ? `<div style="font-size:11px;color:var(--red);margin-bottom:6px">⚠️ Missing required fields (q, opts[4], ans)</div>` : ''}
-      <div class="wq-preview-q">${r._idx+1}. ${r.q||'<em>missing question text</em>'}</div>
+      <div class="wq-preview-q">${r._idx+1}. ${r.q ? renderQuestion(r.q) : '<em>missing question text</em>'}</div>
       ${r.opts ? `<div class="wq-preview-opts">${(r.opts||[]).map((o,oi)=>`<span class="wq-preview-opt ${oi===r.ans?'correct':''}">${String.fromCharCode(65+oi)}. ${o}</span>`).join('')}</div>` : ''}
       <div style="display:flex;gap:10px;font-size:11px;color:var(--text3)">
         <span>📌 ${r.topic||'General'}</span>
@@ -1975,12 +2057,13 @@ function renderWizardAdded() {
           <span class="badge badge-gray" style="font-size:10px">${q.topic||'General'}</span>
           <span class="badge badge-${q.diff==='easy'?'green':q.diff==='hard'?'red':'yellow'}" style="font-size:10px">${q.diff||'easy'}</span>
         </div>
-        <div class="wq-preview-q">${i+1}. ${q.q}</div>
-        <div class="wq-preview-opts">${(q.opts||[]).map((o,oi)=>`<span class="wq-preview-opt ${oi===q.ans?'correct':''}">${String.fromCharCode(65+oi)}. ${o}</span>`).join('')}</div>
+        <div class="wq-preview-q">${i+1}. ${renderQuestion(q.q)}</div>
+        <div class="wq-preview-opts">${(q.opts||[]).map((o,oi)=>`<span class="wq-preview-opt ${oi===q.ans?'correct':''}">${String.fromCharCode(65+oi)}. ${escHtml(o)}</span>`).join('')}</div>
       </div>
       <button class="btn btn-danger btn-sm" style="flex-shrink:0;margin-top:2px" onclick="removeWizardQ(${i})">✕</button>
     </div>`).join('');
-}
+
+  }
 
 function removeWizardQ(i) {
   wizardQs.splice(i, 1);
@@ -2168,7 +2251,7 @@ function renderAssignQList() {
           <span class="badge badge-${diffColor}" style="font-size:10px">${q.diff||'easy'}</span>
           <span style="font-size:10px;color:var(--text3);margin-left:4px">#${i+1}</span>
         </div>
-        <div class="assign-q-text">${escHtml(q.q)}</div>
+        <div class="assign-q-text">${renderQuestion(q.q)}</div>
         <div class="assign-q-opts">
           ${opts.map((o,oi) => `<span class="assign-opt ${oi===q.ans?'assign-opt-correct':''}">${String.fromCharCode(65+oi)}. ${escHtml(o)}</span>`).join('')}
         </div>
@@ -2326,7 +2409,7 @@ async function filterQuestions() {
           <td>${mod ? mod.icon+' '+mod.name.split(' ')[0] : q2.moduleId}</td>
           <td><span class="badge badge-gray">${q2.topic||'General'}</span></td>
           <td><span class="badge badge-${q2.diff==='easy'?'green':q2.diff==='hard'?'red':'yellow'}">${q2.diff||'easy'}</span></td>
-          <td style="max-width:280px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${q2.q}</td>
+          <td style="max-width:280px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${escHtml((q2.q||'').replace(/\[CODE\][\s\S]*?\[\/CODE\]/,'[code]'))}</td>
           <td style="max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--green)">${opts[(q2.ans||0)]||''}</td>
           <td style="min-width:110px">
             ${taggedSet
@@ -2526,6 +2609,9 @@ function switchQTab(tab) {
   document.getElementById('tabSingleQ').classList.toggle('active', tab==='single');
   document.getElementById('tabBulkQ').classList.toggle('active', tab==='bulk');
 }
+
+
+
 
 // ════════════════════════════════════════════════════════════════
 // ADMIN: SCORES
@@ -3448,6 +3534,54 @@ async function startTest(moduleId, setId) {
   startTimer();
 }
 
+// Render question text + optional code block (between [CODE]...[/CODE] markers)
+function renderQuestion(qText) {
+  if (!qText) return '';
+
+  // Support [CODE], [CODE:java], [CODE:python], case-insensitive
+  const codeMatch = qText.match(/\[CODE(?::(\w+))?\]([\s\S]*?)\[\/CODE\]/i);
+  if (!codeMatch) return escHtml(qText);
+
+  const before = qText.substring(0, codeMatch.index).trim();
+  const lang   = (codeMatch[1] || 'java').toLowerCase();
+  const code   = codeMatch[2].replace(/^\n/, '').replace(/\n$/, ''); // trim leading/trailing newline only
+  const after  = qText.substring(codeMatch.index + codeMatch[0].length).trim();
+
+  // Syntax highlight via Prism if available
+  let highlighted;
+  try {
+    const grammar = (typeof Prism !== 'undefined') && Prism.languages[lang];
+    highlighted = grammar
+      ? Prism.highlight(code, grammar, lang)
+      : escHtml(code);
+  } catch(e) {
+    highlighted = escHtml(code);
+  }
+
+  // Build line numbers sidebar
+  const lineCount = code.split('\n').length;
+  const lineNums  = Array.from({ length: lineCount }, (_, i) =>
+    `<span>${i + 1}</span>`
+  ).join('');
+
+  const langLabel = { java: 'Java', python: 'Python', js: 'JavaScript',
+    javascript: 'JavaScript', sql: 'SQL', cpp: 'C++', c: 'C' }[lang] || lang.toUpperCase();
+
+  return `
+    ${before ? `<div style="margin-bottom:8px">${escHtml(before)}</div>` : ''}
+    <div class="q-code-wrapper">
+      <div class="q-code-bar">
+        <span class="q-code-lang">${langLabel}</span>
+        <span class="q-code-linecnt">${lineCount} line${lineCount !== 1 ? 's' : ''}</span>
+      </div>
+      <div class="q-code-body">
+        <div class="q-code-nums">${lineNums}</div>
+        <pre class="q-code language-${lang}"><code class="language-${lang}">${highlighted}</code></pre>
+      </div>
+    </div>
+    ${after ? `<div style="margin-top:8px">${escHtml(after)}</div>` : ''}`.trim();
+}
+
 function renderTestQuestion() {
   const { questions, answers, marked, current } = testState;
   const q = questions[current];
@@ -3469,7 +3603,7 @@ function renderTestQuestion() {
             <span class="badge badge-gray">${q.topic||'General'}</span>
             ${marked[current]?'<span class="badge badge-yellow">🚩 Marked</span>':''}
           </div>
-          <div class="q-text">${escHtml(q.q)}</div>
+          <div class="q-text">${renderQuestion(q.q)}</div>
         </div>
       </div>
       <div class="options-list">
@@ -3784,7 +3918,7 @@ function renderReviewList(reviewData, filter) {
               <span class="badge badge-${q.diff==='easy'?'green':q.diff==='hard'?'red':'yellow'}">${q.diff}</span>
               <span class="badge badge-gray">${q.topic}</span>
             </div>
-            <div style="font-size:14px;font-weight:500;line-height:1.5">${escHtml(q.q)}</div>
+            <div style="font-size:14px;font-weight:500;line-height:1.5">${renderQuestion(q.q)}</div>
           </div>
         </div>
         <div style="display:flex;flex-direction:column;gap:6px">
