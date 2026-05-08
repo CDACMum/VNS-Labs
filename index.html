@@ -1,0 +1,3957 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VNS Labs | PGCP-BDA MCQ Practice Platform — C-DAC Kharghar</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+:root {
+  --bg: #0a0e1a;
+  --bg2: #0f1628;
+  --bg3: #151d35;
+  --card: #1a2340;
+  --card2: #1e2847;
+  --border: #2a3557;
+  --border2: #334066;
+  --text: #e8eaf6;
+  --text2: #9ba3c7;
+  --text3: #6b75a0;
+  --accent: #4f8ef7;
+  --accent2: #6fa3ff;
+  --green: #22c55e;
+  --red: #ef4444;
+  --yellow: #f59e0b;
+  --purple: #a855f7;
+  --cyan: #06b6d4;
+  --orange: #f97316;
+  --pink: #ec4899;
+  --r: 12px;
+  --r2: 8px;
+  --shadow: 0 4px 24px rgba(0,0,0,0.4);
+  --glow: 0 0 30px rgba(79,142,247,0.15);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;font-family:'Space Grotesk',sans-serif;background:var(--bg);color:var(--text);overflow:hidden}
+a{color:inherit;text-decoration:none}
+button{font-family:inherit;cursor:pointer;border:none;outline:none}
+input,select,textarea{font-family:inherit;outline:none}
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-track{background:var(--bg2)}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
+
+/* ── LAYOUT ── */
+#app{height:100vh;display:flex;flex-direction:column}
+.page{display:none;flex:1;overflow:hidden}
+.page.active{display:flex;flex-direction:column}
+
+/* ── LOGIN PAGE ── */
+#loginPage{background:var(--bg);align-items:center;justify-content:center;position:relative;overflow:hidden}
+.login-bg{position:absolute;inset:0;background:
+  radial-gradient(ellipse at 20% 50%,rgba(79,142,247,0.08) 0%,transparent 60%),
+  radial-gradient(ellipse at 80% 20%,rgba(168,85,247,0.08) 0%,transparent 60%),
+  radial-gradient(ellipse at 60% 80%,rgba(6,182,212,0.06) 0%,transparent 50%)}
+.login-grid{position:absolute;inset:0;background-image:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px);background-size:60px 60px;opacity:0.15}
+.login-box{position:relative;z-index:2;width:420px;background:var(--card);border:1px solid var(--border);border-radius:20px;padding:40px;box-shadow:var(--shadow),var(--glow)}
+.login-logo{text-align:center;margin-bottom:32px}
+.login-logo .badge{display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,rgba(79,142,247,0.2),rgba(168,85,247,0.2));border:1px solid rgba(79,142,247,0.3);border-radius:50px;padding:6px 16px;font-size:12px;color:var(--accent2);margin-bottom:16px;letter-spacing:1px;text-transform:uppercase;font-weight:600}
+.login-logo h1{font-family:'Syne',sans-serif;font-size:36px;font-weight:800;background:linear-gradient(135deg,#4f8ef7,#a855f7,#06b6d4);-webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1.1;letter-spacing:-1px}
+.login-logo p{color:var(--text2);font-size:13px;margin-top:6px}
+.login-logo .tagline{font-size:14px;color:var(--accent2);font-weight:600;font-style:italic;margin-top:8px}
+.login-tabs{display:flex;background:var(--bg2);border-radius:10px;padding:4px;margin-bottom:28px;gap:4px}
+.login-tab{flex:1;padding:8px;text-align:center;border-radius:7px;font-size:13px;font-weight:600;color:var(--text3);cursor:pointer;transition:all 0.2s}
+.login-tab.active{background:var(--accent);color:#fff}
+.form-group{margin-bottom:18px}
+.form-group label{display:block;font-size:12px;font-weight:600;color:var(--text2);margin-bottom:6px;text-transform:uppercase;letter-spacing:0.5px}
+.form-group input,.form-group select{width:100%;background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);padding:11px 14px;color:var(--text);font-size:14px;transition:border-color 0.2s}
+.form-group input:focus,.form-group select:focus{border-color:var(--accent)}
+.btn-primary{width:100%;background:linear-gradient(135deg,#4f8ef7,#6fa3ff);color:#fff;font-weight:700;font-size:15px;padding:13px;border-radius:var(--r2);transition:all 0.2s;letter-spacing:0.3px}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 8px 24px rgba(79,142,247,0.4)}
+.login-error{background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);border-radius:var(--r2);padding:10px 14px;font-size:13px;color:#f87171;margin-bottom:16px;display:none}
+
+/* ── TOP NAV ── */
+.topnav{height:60px;background:var(--bg2);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 20px;gap:16px;flex-shrink:0;z-index:100}
+.nav-brand{font-family:'Syne',sans-serif;font-size:18px;font-weight:800;background:linear-gradient(135deg,#4f8ef7,#a855f7);-webkit-background-clip:text;-webkit-text-fill-color:transparent;white-space:nowrap}
+.nav-spacer{flex:1}
+.nav-user{display:flex;align-items:center;gap:10px}
+.nav-avatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#4f8ef7,#a855f7);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;color:#fff;flex-shrink:0}
+.nav-info{line-height:1.3}
+.nav-info .name{font-weight:600;font-size:14px}
+.nav-info .role{font-size:11px;color:var(--accent);font-weight:600;text-transform:uppercase;letter-spacing:0.5px}
+.nav-btn{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r2);padding:7px 14px;font-size:13px;font-weight:600;color:var(--text2);transition:all 0.2s}
+.nav-btn:hover{border-color:var(--accent);color:var(--accent)}
+.nav-btn.active{border-color:var(--accent);color:var(--accent);background:rgba(79,142,247,0.1)}
+
+/* ── MAIN LAYOUT with SIDEBAR ── */
+.main-layout{display:flex;flex:1;overflow:hidden}
+.sidebar{width:220px;background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;padding:16px 0;flex-shrink:0;overflow-y:auto}
+.sidebar-section{padding:0 12px;margin-bottom:8px}
+.sidebar-label{font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:1px;padding:0 8px;margin-bottom:6px}
+.sidebar-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:var(--r2);font-size:13px;font-weight:500;color:var(--text2);cursor:pointer;transition:all 0.15s;margin-bottom:2px}
+.sidebar-item .si-icon{font-size:16px;width:20px;text-align:center;flex-shrink:0}
+.sidebar-item:hover{background:var(--card);color:var(--text)}
+.sidebar-item.active{background:linear-gradient(135deg,rgba(79,142,247,0.2),rgba(79,142,247,0.1));color:var(--accent2);border:1px solid rgba(79,142,247,0.2)}
+.sidebar-item .badge-count{margin-left:auto;background:var(--accent);color:#fff;font-size:10px;font-weight:700;padding:1px 6px;border-radius:10px}
+.content-area{flex:1;overflow-y:auto;padding:24px}
+
+/* ── SECTION HEADERS ── */
+.section-header{display:flex;align-items:center;gap:12px;margin-bottom:20px}
+.section-header h2{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:var(--text)}
+.section-header p{font-size:13px;color:var(--text2);margin-top:2px}
+.section-header .hd-right{margin-left:auto;display:flex;gap:8px;align-items:center}
+
+/* ── CARDS ── */
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--r)}
+.card-inner{padding:20px}
+.stat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:14px;margin-bottom:20px}
+.stat-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:18px;position:relative;overflow:hidden}
+.stat-card::before{content:'';position:absolute;top:-20px;right:-20px;width:80px;height:80px;border-radius:50%;opacity:0.1}
+.stat-card.blue::before{background:#4f8ef7}
+.stat-card.green::before{background:#22c55e}
+.stat-card.purple::before{background:#a855f7}
+.stat-card.yellow::before{background:#f59e0b}
+.stat-card.cyan::before{background:#06b6d4}
+.stat-card.orange::before{background:#f97316}
+.stat-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--text3);margin-bottom:8px}
+.stat-val{font-size:28px;font-weight:700;font-family:'Syne',sans-serif;color:var(--text)}
+.stat-sub{font-size:12px;color:var(--text2);margin-top:4px}
+.stat-icon{font-size:24px;margin-bottom:8px}
+
+/* ── TABLES ── */
+.tbl-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:13px}
+thead th{background:var(--bg2);color:var(--text3);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;padding:10px 14px;text-align:left;border-bottom:1px solid var(--border)}
+tbody tr{border-bottom:1px solid var(--border);transition:background 0.15s}
+tbody tr:hover{background:var(--card2)}
+tbody td{padding:11px 14px;color:var(--text)}
+tbody tr:last-child{border-bottom:none}
+
+/* ── BADGES ── */
+.badge{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:50px;font-size:11px;font-weight:700}
+.badge-blue{background:rgba(79,142,247,0.15);color:#6fa3ff;border:1px solid rgba(79,142,247,0.3)}
+.badge-green{background:rgba(34,197,94,0.15);color:#4ade80;border:1px solid rgba(34,197,94,0.3)}
+.badge-red{background:rgba(239,68,68,0.15);color:#f87171;border:1px solid rgba(239,68,68,0.3)}
+.badge-yellow{background:rgba(245,158,11,0.15);color:#fcd34d;border:1px solid rgba(245,158,11,0.3)}
+.badge-purple{background:rgba(168,85,247,0.15);color:#c084fc;border:1px solid rgba(168,85,247,0.3)}
+.badge-cyan{background:rgba(6,182,212,0.15);color:#22d3ee;border:1px solid rgba(6,182,212,0.3)}
+.badge-gray{background:rgba(107,117,160,0.15);color:var(--text3);border:1px solid var(--border)}
+.badge-orange{background:rgba(249,115,22,0.15);color:#fb923c;border:1px solid rgba(249,115,22,0.3)}
+
+/* ── BUTTONS ── */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:var(--r2);font-size:13px;font-weight:600;transition:all 0.15s;cursor:pointer;border:1px solid transparent}
+.btn-sm{padding:5px 12px;font-size:12px}
+.btn-accent{background:var(--accent);color:#fff;border-color:var(--accent)}
+.btn-accent:hover{background:#3d7fe6;box-shadow:0 4px 16px rgba(79,142,247,0.4)}
+.btn-outline{background:transparent;color:var(--text2);border-color:var(--border)}
+.btn-outline:hover{border-color:var(--accent);color:var(--accent)}
+.btn-danger{background:rgba(239,68,68,0.15);color:#f87171;border-color:rgba(239,68,68,0.3)}
+.btn-danger:hover{background:rgba(239,68,68,0.25)}
+.btn-green{background:rgba(34,197,94,0.15);color:#4ade80;border-color:rgba(34,197,94,0.3)}
+.btn-green:hover{background:rgba(34,197,94,0.25)}
+.btn-purple{background:rgba(168,85,247,0.15);color:#c084fc;border-color:rgba(168,85,247,0.3)}
+.btn-yellow{background:rgba(245,158,11,0.15);color:#fcd34d;border-color:rgba(245,158,11,0.3)}
+
+/* ── MODULE CARDS GRID ── */
+.module-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px}
+.mod-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:20px;cursor:pointer;transition:all 0.2s;position:relative;overflow:hidden}
+.mod-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--c1,#4f8ef7),var(--c2,#a855f7))}
+.mod-card:hover{border-color:var(--border2);transform:translateY(-2px);box-shadow:var(--shadow)}
+.mod-icon{font-size:32px;margin-bottom:12px}
+.mod-name{font-weight:700;font-size:15px;margin-bottom:4px}
+.mod-desc{font-size:12px;color:var(--text2);margin-bottom:12px}
+.mod-meta{display:flex;gap:8px;flex-wrap:wrap}
+.mod-progress{height:4px;background:var(--bg2);border-radius:2px;margin-top:12px;overflow:hidden}
+.mod-progress-bar{height:100%;background:linear-gradient(90deg,var(--c1,#4f8ef7),var(--c2,#a855f7));border-radius:2px;transition:width 0.5s}
+
+/* ── STAR RATING ── */
+.star-row{display:flex;align-items:center;gap:6px;margin-top:12px;padding-top:10px;border-top:1px solid var(--border)}
+.star-group{display:flex;gap:2px}
+.star{font-size:18px;cursor:pointer;transition:transform 0.15s;line-height:1;user-select:none;filter:grayscale(1) opacity(0.35)}
+.star.filled{filter:none}
+.star:hover{transform:scale(1.25)}
+.star-group:hover .star{filter:none}
+.star-group:hover .star ~ .star{filter:grayscale(1) opacity(0.35)}
+.star-avg{font-size:11px;color:var(--text3);margin-left:4px}
+.star-count{font-size:10px;color:var(--text3)}
+
+/* ── MODAL ── */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.7);backdrop-filter:blur(4px);z-index:1000;display:none;align-items:center;justify-content:center;padding:20px}
+.modal-overlay.open{display:flex}
+.modal{background:var(--card);border:1px solid var(--border);border-radius:16px;width:100%;max-width:580px;max-height:90vh;display:flex;flex-direction:column;box-shadow:var(--shadow)}
+.modal-lg{max-width:900px}
+.modal-xl{max-width:1100px}
+.modal-header{padding:20px 24px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;flex-shrink:0}
+.modal-header h3{font-family:'Syne',sans-serif;font-size:18px;font-weight:800;flex:1}
+.modal-body{padding:24px;overflow-y:auto;flex:1}
+.modal-footer{padding:16px 24px;border-top:1px solid var(--border);display:flex;gap:10px;justify-content:flex-end;flex-shrink:0}
+.modal-close{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);width:30px;height:30px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;color:var(--text2);transition:all 0.15s}
+.modal-close:hover{background:var(--card2);color:var(--text)}
+
+/* ── FORM STYLES ── */
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.frow.three{grid-template-columns:1fr 1fr 1fr}
+.fgroup{margin-bottom:14px}
+.fgroup label{display:block;font-size:11px;font-weight:700;color:var(--text3);margin-bottom:5px;text-transform:uppercase;letter-spacing:0.5px}
+.fgroup input,.fgroup select,.fgroup textarea{width:100%;background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);padding:9px 12px;color:var(--text);font-size:13px;transition:border-color 0.2s}
+.fgroup input:focus,.fgroup select:focus,.fgroup textarea:focus{border-color:var(--accent)}
+.fgroup textarea{resize:vertical;min-height:80px;font-family:inherit}
+.fgroup select option{background:var(--bg2)}
+.full{grid-column:1/-1}
+
+/* ── ALERT / TOAST ── */
+.toast-container{position:fixed;top:20px;right:20px;z-index:9999;display:flex;flex-direction:column;gap:8px;pointer-events:none}
+.toast{background:var(--card2);border:1px solid var(--border);border-radius:var(--r2);padding:12px 16px;font-size:13px;display:flex;align-items:center;gap:10px;min-width:280px;animation:slideIn 0.3s ease;pointer-events:all;box-shadow:var(--shadow)}
+.toast.success{border-color:rgba(34,197,94,0.4);color:#4ade80}
+.toast.error{border-color:rgba(239,68,68,0.4);color:#f87171}
+.toast.info{border-color:rgba(79,142,247,0.4);color:var(--accent2)}
+@keyframes slideIn{from{transform:translateX(100%);opacity:0}to{transform:translateX(0);opacity:1}}
+
+/* ── TEST PAGE ── */
+#testPage{overflow:hidden}
+.test-layout{display:flex;flex:1;overflow:hidden;height:calc(100vh - 60px)}
+.test-main{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.test-topbar{background:var(--bg2);border-bottom:1px solid var(--border);padding:12px 24px;display:flex;align-items:center;gap:16px;flex-shrink:0}
+.test-timer{font-family:'JetBrains Mono',monospace;font-size:22px;font-weight:600;color:var(--green)}
+.test-timer.warning{color:var(--yellow)}
+.test-timer.critical{color:var(--red);animation:pulse 1s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.5}}
+.test-progress-bar{height:3px;background:var(--bg3);flex:1;border-radius:2px;overflow:hidden}
+.test-progress-fill{height:100%;background:linear-gradient(90deg,#4f8ef7,#a855f7);transition:width 0.3s}
+.test-qnum{font-size:13px;font-weight:600;color:var(--text2)}
+.test-content{flex:1;overflow-y:auto;padding:24px}
+.q-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:24px;max-width:780px;margin:0 auto}
+.q-header{display:flex;align-items:flex-start;gap:12px;margin-bottom:20px}
+.q-num-badge{background:linear-gradient(135deg,#4f8ef7,#a855f7);color:#fff;width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex-shrink:0;margin-top:2px}
+.q-meta{display:flex;gap:6px;margin-bottom:8px}
+.q-text{font-size:15px;font-weight:500;line-height:1.6;color:var(--text)}
+.q-code{font-family:'JetBrains Mono',monospace;background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);padding:14px 16px;margin:12px 0;font-size:13px;overflow-x:auto;color:#e2e8f0;line-height:1.5}
+.options-list{display:flex;flex-direction:column;gap:10px;margin-top:16px}
+.opt-item{display:flex;align-items:center;gap:12px;padding:13px 16px;background:var(--bg2);border:2px solid var(--border);border-radius:var(--r2);cursor:pointer;transition:all 0.15s}
+.opt-item:hover{border-color:var(--border2);background:var(--card2)}
+.opt-item.selected{border-color:var(--accent);background:rgba(79,142,247,0.1)}
+.opt-item.correct{border-color:var(--green);background:rgba(34,197,94,0.1)}
+.opt-item.wrong{border-color:var(--red);background:rgba(239,68,68,0.1)}
+.opt-letter{width:28px;height:28px;border-radius:6px;background:var(--border);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;flex-shrink:0;transition:all 0.15s}
+.opt-item.selected .opt-letter{background:var(--accent);color:#fff}
+.opt-item.correct .opt-letter{background:var(--green);color:#fff}
+.opt-item.wrong .opt-letter{background:var(--red);color:#fff}
+.opt-text{font-size:14px;flex:1}
+.test-nav{background:var(--bg2);border-top:1px solid var(--border);padding:14px 24px;display:flex;align-items:center;gap:10px;flex-shrink:0}
+.test-sidebar{width:260px;background:var(--bg2);border-left:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;overflow-y:auto}
+.test-sidebar-inner{padding:16px}
+.test-sidebar h4{font-size:12px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:12px}
+.q-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+.q-dot{width:100%;aspect-ratio:1;border-radius:6px;border:1px solid var(--border);background:var(--bg3);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;cursor:pointer;transition:all 0.15s}
+.q-dot:hover{border-color:var(--border2)}
+.q-dot.answered{background:var(--accent);border-color:var(--accent);color:#fff}
+.q-dot.marked{background:var(--yellow);border-color:var(--yellow);color:#000}
+.q-dot.current{border-color:var(--accent2);color:var(--accent2);box-shadow:0 0 8px rgba(79,142,247,0.4)}
+.q-dot.answered.marked{background:linear-gradient(135deg,var(--accent),var(--yellow));border-color:var(--yellow)}
+.q-legend{display:flex;flex-direction:column;gap:6px;margin-top:16px;font-size:11px;color:var(--text2)}
+.q-legend-item{display:flex;align-items:center;gap:6px}
+.q-legend-dot{width:12px;height:12px;border-radius:3px}
+
+/* ── RESULT PAGE ── */
+.result-hero{text-align:center;padding:32px 24px;background:var(--card);border:1px solid var(--border);border-radius:var(--r);margin-bottom:20px;position:relative;overflow:hidden}
+.result-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 0%,rgba(79,142,247,0.1),transparent 60%)}
+.result-score-circle{width:140px;height:140px;border-radius:50%;background:conic-gradient(var(--accent) var(--pct,0%),var(--bg3) 0%);display:flex;align-items:center;justify-content:center;margin:0 auto 20px;position:relative}
+.result-score-circle::after{content:'';position:absolute;width:110px;height:110px;border-radius:50%;background:var(--card)}
+.result-score-inner{position:relative;z-index:1;text-align:center}
+.result-pct{font-family:'Syne',sans-serif;font-size:30px;font-weight:800}
+.result-grade{font-size:12px;color:var(--text2);font-weight:600}
+.result-stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+.result-stat{background:var(--card);border:1px solid var(--border);border-radius:var(--r2);padding:14px;text-align:center}
+.result-stat .val{font-size:22px;font-weight:700;font-family:'Syne',sans-serif}
+.result-stat .lbl{font-size:11px;color:var(--text2);margin-top:4px;text-transform:uppercase;letter-spacing:0.5px;font-weight:600}
+
+/* ── ACHIEVEMENT BADGES ── */
+.achievements-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:14px}
+.achievement-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:16px;text-align:center;transition:all 0.2s;cursor:pointer}
+.achievement-card.earned{border-color:rgba(245,158,11,0.4);background:rgba(245,158,11,0.05)}
+.achievement-card.earned:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(245,158,11,0.2)}
+.achievement-card.locked{opacity:0.4;filter:grayscale(1)}
+.achievement-icon{font-size:36px;margin-bottom:10px;line-height:1}
+.achievement-name{font-size:12px;font-weight:700;color:var(--text);margin-bottom:4px}
+.achievement-desc{font-size:10px;color:var(--text2);line-height:1.4}
+.achievement-card.earned .achievement-icon{filter:drop-shadow(0 0 8px rgba(245,158,11,0.6))}
+
+/* ── ANALYTICS ── */
+.chart-wrap{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:20px}
+.chart-title{font-size:14px;font-weight:700;margin-bottom:16px;color:var(--text)}
+
+/* ── SEARCH & FILTER BAR ── */
+.filter-bar{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;align-items:center}
+.search-input{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);padding:8px 14px;color:var(--text);font-size:13px;width:220px}
+.search-input:focus{border-color:var(--accent);outline:none}
+.filter-select{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);padding:8px 12px;color:var(--text);font-size:13px}
+.filter-select:focus{border-color:var(--accent);outline:none}
+
+/* ── LEADERBOARD ── */
+.lb-row{display:flex;align-items:center;gap:14px;padding:12px 16px;border-bottom:1px solid var(--border);transition:background 0.15s}
+.lb-row:hover{background:var(--card2)}
+.lb-rank{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex-shrink:0}
+.lb-rank.gold{background:linear-gradient(135deg,#f59e0b,#fcd34d);color:#000}
+.lb-rank.silver{background:linear-gradient(135deg,#94a3b8,#cbd5e1);color:#000}
+.lb-rank.bronze{background:linear-gradient(135deg,#b45309,#d97706);color:#fff}
+.lb-rank.normal{background:var(--bg3);color:var(--text2);border:1px solid var(--border)}
+.lb-avatar{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;flex-shrink:0}
+.lb-name{flex:1;font-weight:600;font-size:14px}
+.lb-score{font-family:'JetBrains Mono',monospace;font-weight:600;color:var(--accent2)}
+.lb-pct{font-size:12px;color:var(--text2)}
+
+/* ── TABS ── */
+.tab-bar{display:flex;gap:0;border-bottom:1px solid var(--border);margin-bottom:20px}
+.tab-btn{padding:10px 18px;font-size:13px;font-weight:600;color:var(--text3);cursor:pointer;border-bottom:2px solid transparent;transition:all 0.2s;background:none;border-top:none;border-left:none;border-right:none;font-family:inherit}
+.tab-btn.active{color:var(--accent2);border-bottom-color:var(--accent)}
+.tab-btn:hover{color:var(--text)}
+.tab-panel{display:none}
+.tab-panel.active{display:block}
+
+/* ── EMPTY STATE ── */
+.empty-state{text-align:center;padding:48px 24px;color:var(--text2)}
+.empty-state .icon{font-size:48px;margin-bottom:16px;opacity:0.5}
+.empty-state h3{font-size:16px;font-weight:600;color:var(--text);margin-bottom:8px}
+.empty-state p{font-size:13px}
+
+/* ── LOADING ── */
+.spinner{width:32px;height:32px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin 0.8s linear infinite;margin:32px auto}
+@keyframes spin{to{transform:rotate(360deg)}}
+.skeleton{background:linear-gradient(90deg,var(--card) 25%,var(--card2) 50%,var(--card) 75%);background-size:200% 100%;animation:shimmer 1.5s infinite;border-radius:var(--r2)}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+
+/* ── SETUP PAGE ── */
+.setup-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:32px;max-width:600px;margin:40px auto}
+.setup-step{display:flex;gap:16px;margin-bottom:24px}
+.setup-step-num{width:36px;height:36px;border-radius:50%;background:var(--accent);color:#fff;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:15px}
+.setup-step-content h3{font-weight:700;margin-bottom:4px}
+.setup-step-content p{font-size:13px;color:var(--text2);line-height:1.5}
+.setup-step-content code{font-family:'JetBrains Mono',monospace;background:var(--bg2);border:1px solid var(--border);border-radius:4px;padding:1px 6px;font-size:12px;color:var(--cyan)}
+
+/* ── RESPONSIVE TWEAKS ── */
+@media(max-width:768px){
+  .sidebar{display:none}
+  .frow{grid-template-columns:1fr}
+  .result-stats-row{grid-template-columns:1fr 1fr}
+  .stat-grid{grid-template-columns:1fr 1fr}
+}
+
+/* ── REVIEW MODE STYLES ── */
+.review-q{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:20px;margin-bottom:16px}
+.review-q.correct-q{border-left:3px solid var(--green)}
+.review-q.wrong-q{border-left:3px solid var(--red)}
+.review-q.skipped-q{border-left:3px solid var(--text3)}
+.explain-box{background:var(--bg2);border:1px solid rgba(79,142,247,0.2);border-radius:var(--r2);padding:12px 16px;margin-top:12px;font-size:13px;color:var(--text2);line-height:1.5}
+.explain-box strong{color:var(--accent2)}
+
+/* ── CSV IMPORT STYLES ── */
+.drop-zone{border:2px dashed var(--border2);border-radius:var(--r);padding:32px;text-align:center;cursor:pointer;transition:all 0.2s;background:var(--bg2)}
+.drop-zone:hover,.drop-zone.drag-over{border-color:var(--accent);background:rgba(79,142,247,0.05)}
+.drop-zone .dz-icon{font-size:40px;margin-bottom:12px;opacity:0.6}
+.drop-zone p{font-size:13px;color:var(--text2)}
+.drop-zone strong{color:var(--accent2);font-size:15px;display:block;margin-bottom:6px}
+
+/* ── DIFFICULTY INDICATOR ── */
+.diff-bar{height:6px;border-radius:3px;background:var(--bg3);overflow:hidden;margin-top:6px}
+.diff-fill{height:100%;border-radius:3px}
+.diff-easy .diff-fill{width:33%;background:var(--green)}
+.diff-medium .diff-fill{width:66%;background:var(--yellow)}
+.diff-hard .diff-fill{width:100%;background:var(--red)}
+
+/* ── CONFIG SETUP REQUIRED ── */
+#setupPage{display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;padding:24px}
+
+/* ── SET WIZARD ── */
+.wizard-step{display:flex;align-items:center;gap:10px;padding:14px 24px;color:var(--text3);font-size:13px;font-weight:600;cursor:pointer;transition:all 0.2s;border-bottom:2px solid transparent;flex:1}
+.wizard-step.active{color:var(--accent);border-bottom-color:var(--accent);background:rgba(79,142,247,0.05)}
+.wizard-step.done{color:var(--green);border-bottom-color:var(--green)}
+.wizard-step-arrow{display:flex;align-items:center;color:var(--border2);font-size:20px;padding:0 4px}
+.ws-num{width:26px;height:26px;border-radius:50%;border:2px solid currentColor;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;flex-shrink:0}
+.wizard-step.active .ws-num{background:var(--accent);border-color:var(--accent);color:#fff}
+.wizard-step.done .ws-num{background:var(--green);border-color:var(--green);color:#fff}
+.ws-label{white-space:nowrap}
+.wq-tab{padding:8px 16px;border-radius:20px;font-size:13px;font-weight:600;background:var(--bg2);border:1px solid var(--border);color:var(--text2);cursor:pointer;transition:all 0.2s}
+.wq-tab.active{background:var(--accent);border-color:var(--accent);color:#fff}
+.wq-preview-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);padding:14px;margin-bottom:8px;position:relative}
+.wq-preview-card.valid{border-color:rgba(34,197,94,0.4)}
+.wq-preview-card.invalid{border-color:rgba(239,68,68,0.4);background:rgba(239,68,68,0.04)}
+.wq-preview-q{font-size:13px;font-weight:600;color:var(--text);margin-bottom:8px}
+.wq-preview-opts{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px}
+.wq-preview-opt{font-size:11px;padding:3px 10px;border-radius:4px;background:var(--bg3);color:var(--text2);border:1px solid var(--border)}
+.wq-preview-opt.correct{background:rgba(34,197,94,0.15);border-color:rgba(34,197,94,0.4);color:var(--green);font-weight:700}
+.btn-green{background:linear-gradient(135deg,#22c55e,#16a34a);color:#fff;font-weight:700}
+.btn-green:hover{opacity:0.9}
+/* ── ASSIGN QUESTIONS MODAL ── */
+.assign-q-row{display:flex;gap:14px;padding:14px;border:1px solid var(--border);border-radius:var(--r2);margin-bottom:8px;cursor:pointer;transition:all 0.15s;background:var(--bg2)}
+.assign-q-row:hover{border-color:var(--accent);background:var(--card)}
+.assign-q-row.assign-q-checked{border-color:var(--accent);background:rgba(79,142,247,0.08)}
+.assign-q-check{flex-shrink:0;padding-top:2px}
+.assign-checkbox{width:22px;height:22px;border-radius:6px;border:2px solid var(--border2);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff;transition:all 0.15s;flex-shrink:0}
+.assign-checkbox.checked{background:var(--accent);border-color:var(--accent)}
+.assign-q-body{flex:1;min-width:0}
+.assign-q-meta{display:flex;gap:6px;margin-bottom:6px;flex-wrap:wrap}
+.assign-q-text{font-size:14px;color:var(--text);line-height:1.5;margin-bottom:8px;font-weight:500}
+.assign-q-opts{display:flex;flex-wrap:wrap;gap:6px}
+.assign-opt{font-size:11px;padding:3px 10px;border-radius:4px;background:var(--bg3);color:var(--text2);border:1px solid var(--border)}
+.assign-opt.assign-opt-correct{background:rgba(34,197,94,0.15);border-color:rgba(34,197,94,0.4);color:var(--green);font-weight:600}
+</style>
+</head>
+<body>
+<div id="app">
+
+<!-- TOAST CONTAINER -->
+<div class="toast-container" id="toastContainer"></div>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- SETUP PAGE -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<div id="setupPage" class="page" style="display:none"></div>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- LOGIN PAGE -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<div id="loginPage" class="page">
+  <div class="login-bg"></div>
+  <div class="login-grid"></div>
+  <div class="login-box">
+    <div class="login-logo">
+      <div class="badge">⚡ C-DAC Kharghar · PGCP-BDA</div>
+      <h1>VNS Labs</h1>
+      <p class="tagline">Practice Smart. Score Higher. Succeed.</p>
+      <p style="font-size:11px;color:var(--text3);margin-top:4px">Big Data Analytics · MCQ Practice Platform</p>
+    </div>
+    <div class="login-tabs">
+      <div class="login-tab active" onclick="switchLoginTab('student')">👨‍🎓 Student</div>
+      <div class="login-tab" onclick="switchLoginTab('admin')">🛡️ Admin</div>
+    </div>
+    <div id="loginError" class="login-error"></div>
+    <div id="studentLoginForm">
+      <div class="form-group">
+        <label>PRN Number</label>
+        <input type="text" id="loginId" placeholder="e.g. 260240325001" autocomplete="username" maxlength="15">
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" id="loginPass" autocomplete="current-password"
+          onkeydown="if(event.key==='Enter')doLogin()">
+      </div>
+      
+    </div>
+    <div id="adminLoginForm" style="display:none">
+      <div class="form-group">
+        <label>Admin ID</label>
+        <input type="text" id="adminId" placeholder="Admin ID">
+      </div>
+      <div class="form-group">
+        <label>Admin Password</label>
+        <input type="password" id="adminPass" placeholder="Admin password"
+          onkeydown="if(event.key==='Enter')doLogin()">
+      </div>
+    </div>
+    <button class="btn-primary" onclick="doLogin()">Sign In →</button>
+    <p style="text-align:center;font-size:11px;color:var(--text3);margin-top:16px">© 2025 VNS Labs · C-DAC Kharghar</p>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- ADMIN DASHBOARD -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<div id="adminPage" class="page">
+  <div class="topnav">
+    <div class="nav-brand">🧪 VNS Labs · Admin</div>
+    <div class="nav-spacer"></div>
+    <button class="nav-btn" onclick="doLogout()">Sign Out</button>
+    <div class="nav-user">
+      <div class="nav-avatar">A</div>
+      <div class="nav-info">
+        <div class="name">Administrator</div>
+        <div class="role">Super Admin</div>
+      </div>
+    </div>
+  </div>
+  <div class="main-layout">
+    <div class="sidebar">
+      <div class="sidebar-section">
+        <div class="sidebar-label">Overview</div>
+        <div class="sidebar-item active" onclick="adminNav('dashboard')">
+          <span class="si-icon">📊</span> Dashboard
+        </div>
+        <div class="sidebar-item" onclick="adminNav('analytics')">
+          <span class="si-icon">📈</span> Analytics
+        </div>
+        <div class="sidebar-item" onclick="adminNav('leaderboard')">
+          <span class="si-icon">🏆</span> Leaderboard
+        </div>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-label">Management</div>
+        <div class="sidebar-item" onclick="adminNav('students')">
+          <span class="si-icon">👥</span> Students
+        </div>
+        <div class="sidebar-item" onclick="adminNav('modules')">
+          <span class="si-icon">📚</span> Modules
+        </div>
+        <div class="sidebar-item" onclick="adminNav('sets')">
+          <span class="si-icon">📝</span> Sets
+        </div>
+        <div class="sidebar-item" onclick="adminNav('questions')">
+          <span class="si-icon">❓</span> Questions
+        </div>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-label">Reports</div>
+        <div class="sidebar-item" onclick="adminNav('scores')">
+          <span class="si-icon">🎯</span> Scores
+        </div>
+        <div class="sidebar-item" onclick="adminNav('badges')">
+          <span class="si-icon">🏅</span> Badges
+        </div>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-label">Settings</div>
+        <div class="sidebar-item" onclick="adminNav('settings')">
+          <span class="si-icon">⚙️</span> Settings
+        </div>
+      </div>
+    </div>
+    <div class="content-area" id="adminContent">
+      <div class="spinner"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- STUDENT DASHBOARD -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<div id="studentPage" class="page">
+  <div class="topnav">
+    <div class="nav-brand">🧪 VNS Labs</div>
+    <div class="nav-spacer"></div>
+    <button class="nav-btn student-nav-btn" data-section="modules" onclick="studentNav('modules')">📚 Modules</button>
+    <button class="nav-btn student-nav-btn" data-section="history" onclick="studentNav('history')">📋 History</button>
+    <button class="nav-btn student-nav-btn" data-section="badges" onclick="studentNav('badges')">🏅 Badges</button>
+    <button class="nav-btn student-nav-btn" data-section="leaderboard" onclick="studentNav('leaderboard')">🏆 Rank</button>
+    <button class="nav-btn student-nav-btn" data-section="analytics" onclick="studentNav('analytics')">📈 Analytics</button>
+    <button class="nav-btn" onclick="doLogout()">Sign Out</button>
+    <div class="nav-user">
+      <div class="nav-avatar" id="studentAvatar">S</div>
+      <div class="nav-info">
+        <div class="name" id="studentNameDisplay">Student</div>
+        <div class="role" id="studentIdDisplay">ID</div>
+      </div>
+    </div>
+  </div>
+  <div class="content-area" id="studentContent" style="flex:1;overflow-y:auto">
+    <div class="spinner"></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- TEST PAGE -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<div id="testPage" class="page">
+  <div class="topnav">
+    <div class="nav-brand" id="testModuleName">Test</div>
+    <div class="nav-spacer"></div>
+    <div id="testSetName" style="font-size:13px;color:var(--text2)"></div>
+    <div class="nav-spacer"></div>
+    <button class="btn btn-danger btn-sm" onclick="confirmSubmitTest()">⏹ Submit Test</button>
+  </div>
+  <div class="test-layout">
+    <div class="test-main">
+      <div class="test-topbar">
+        <span>⏱</span>
+        <div class="test-timer" id="testTimer">45:00</div>
+        <div class="test-progress-bar"><div class="test-progress-fill" id="testProgressFill"></div></div>
+        <div class="test-qnum" id="testQNum">Q 1 / 50</div>
+      </div>
+      <div class="test-content" id="testContent"></div>
+      <div class="test-nav">
+        <button class="btn btn-outline" id="btnPrev" onclick="testNav(-1)">← Previous</button>
+        <div style="flex:1"></div>
+        <button class="btn btn-yellow btn-sm" onclick="markForReview()">🚩 Mark Review</button>
+        <div style="flex:1"></div>
+        <button class="btn btn-accent" id="btnNext" onclick="testNav(1)">Next →</button>
+      </div>
+    </div>
+    <div class="test-sidebar">
+      <div class="test-sidebar-inner">
+        <h4>Question Navigator</h4>
+        <div class="q-grid" id="qNavGrid"></div>
+        <div class="q-legend" style="margin-top:16px">
+          <div class="q-legend-item"><div class="q-legend-dot" style="background:var(--accent)"></div> Answered</div>
+          <div class="q-legend-item"><div class="q-legend-dot" style="background:var(--bg3);border:1px solid var(--border)"></div> Not Answered</div>
+          <div class="q-legend-item"><div class="q-legend-dot" style="background:var(--yellow)"></div> Marked for Review</div>
+        </div>
+        <div style="margin-top:20px">
+          <div style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px">Progress</div>
+          <div id="testProgressSummary" style="font-size:12px;color:var(--text2)"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- RESULT PAGE -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<div id="resultPage" class="page">
+  <div class="topnav">
+    <div class="nav-brand">📊 Test Result</div>
+    <div class="nav-spacer"></div>
+    <button class="nav-btn" onclick="goStudentDash()">← Back to Dashboard</button>
+  </div>
+  <div class="content-area" id="resultContent" style="flex:1;overflow-y:auto"></div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- MODALS -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+
+<!-- Add Student Modal -->
+<div class="modal-overlay" id="modalAddStudent">
+  <div class="modal">
+    <div class="modal-header">
+      <span style="font-size:22px">👤</span>
+      <h3 id="addStudentTitle">Add Student</h3>
+      <div class="modal-close" onclick="closeModal('modalAddStudent')">✕</div>
+    </div>
+    <div class="modal-body">
+      <div class="tab-bar">
+        <button class="tab-btn active" onclick="switchStudentTab('single')">Single Student</button>
+        <button class="tab-btn" onclick="switchStudentTab('bulk')">Bulk Import (CSV)</button>
+      </div>
+      <div id="tabSingleStudent" class="tab-panel active">
+        <div class="frow">
+          <div class="fgroup">
+            <label>Enrollment ID *</label>
+            <input type="text" id="sId" placeholder="CDAC2024001">
+          </div>
+          <div class="fgroup">
+            <label>Full Name *</label>
+            <input type="text" id="sName" placeholder="Priya Sharma">
+          </div>
+        </div>
+        <div class="frow">
+          <div class="fgroup">
+            <label>Password (optional)</label>
+            <input type="text" id="sPass" placeholder="Leave blank = first name">
+          </div>
+          <div class="fgroup">
+            <label>Status</label>
+            <select id="sStatus">
+              <option value="active">Active</option>
+              <option value="inactive">Inactive</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div id="tabBulkStudent" class="tab-panel">
+        <div class="drop-zone" id="studentDropZone" onclick="document.getElementById('studentCsvFile').click()"
+          ondragover="event.preventDefault();this.classList.add('drag-over')"
+          ondragleave="this.classList.remove('drag-over')"
+          ondrop="handleStudentDrop(event)">
+          <div class="dz-icon">📂</div>
+          <strong>Drop CSV file here or click to browse</strong>
+          <p>Format: id, name, pass (optional)</p>
+          <p style="margin-top:8px;font-size:11px;color:var(--text3)">Example: CDAC2024001, Priya Sharma, priya</p>
+        </div>
+        <input type="file" id="studentCsvFile" accept=".csv" style="display:none" onchange="handleStudentFile(event)">
+        <div id="bulkStudentPreview" style="margin-top:14px"></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('modalAddStudent')">Cancel</button>
+      <button class="btn btn-accent" onclick="saveStudent()">💾 Save Student</button>
+    </div>
+  </div>
+</div>
+
+<!-- Create/Edit Set Wizard Modal -->
+<div class="modal-overlay" id="modalAddSet">
+  <div class="modal" style="max-width:780px;max-height:92vh;display:flex;flex-direction:column">
+
+    <!-- Header -->
+    <div class="modal-header" style="flex-shrink:0">
+      <span style="font-size:22px" id="setWizardIcon">📝</span>
+      <h3 id="addSetTitle">Create Set</h3>
+      <div class="modal-close" onclick="closeModal('modalAddSet')">✕</div>
+    </div>
+
+    <!-- Step Indicator -->
+    <div id="setWizardSteps" style="display:flex;gap:0;border-bottom:1px solid var(--border);flex-shrink:0">
+      <div class="wizard-step active" id="wstep1" onclick="wizardGo(1)">
+        <div class="ws-num">1</div>
+        <div class="ws-label">Set Details</div>
+      </div>
+      <div class="wizard-step-arrow">›</div>
+      <div class="wizard-step" id="wstep2" onclick="wizardGo(2)">
+        <div class="ws-num">2</div>
+        <div class="ws-label">Add Questions</div>
+      </div>
+    </div>
+
+    <!-- Step 1: Set Details -->
+    <div id="wizardPane1" style="flex:1;overflow-y:auto;padding:24px">
+      <div class="frow">
+        <div class="fgroup" style="flex:2">
+          <label>Module *</label>
+          <select id="setModule" onchange="updateSetId()">
+            <option value="">Select Module</option>
+          </select>
+        </div>
+        <div class="fgroup" style="flex:1">
+          <label>Set ID <span style="font-size:10px;color:var(--text3)">(auto)</span></label>
+          <input type="text" id="setId" placeholder="Auto-generated" readonly style="opacity:0.5;font-family:'JetBrains Mono',monospace;font-size:12px">
+        </div>
+      </div>
+      <div class="fgroup">
+        <label>Set Name *</label>
+        <input type="text" id="setName" placeholder="e.g. Python Basics – Set 1">
+      </div>
+      <div class="fgroup">
+        <label>Description</label>
+        <textarea id="setDesc" rows="2" placeholder="Brief description of this set..."></textarea>
+      </div>
+      <div class="frow three">
+        <div class="fgroup">
+          <label>Timer (minutes)</label>
+          <input type="number" id="setTimer" value="45" min="5" max="180">
+        </div>
+        <div class="fgroup">
+          <label>Question Count</label>
+          <input type="number" id="setQCount" value="50" min="5" max="100">
+        </div>
+        <div class="fgroup">
+          <label>Difficulty Mix</label>
+          <select id="setDiff">
+            <option value="mixed">Mixed</option>
+            <option value="easy">Easy Only</option>
+            <option value="medium">Medium Only</option>
+            <option value="hard">Hard Only</option>
+            <option value="adaptive">Adaptive</option>
+          </select>
+        </div>
+      </div>
+      <div class="frow">
+        <div class="fgroup">
+          <label>Status</label>
+          <select id="setStatus">
+            <option value="draft">Draft</option>
+            <option value="published">Published</option>
+            <option value="archived">Archived</option>
+          </select>
+        </div>
+        <div class="fgroup">
+          <label>Notes</label>
+          <input type="text" id="setNotes" placeholder="Internal notes...">
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 2: Add Questions -->
+    <div id="wizardPane2" style="flex:1;overflow-y:auto;padding:24px;display:none">
+
+      <!-- Sub-tab bar -->
+      <div style="display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap">
+        <button class="wq-tab active" id="wqtab-json"  onclick="switchWQTab('json')">📋 Paste JSON</button>
+        <button class="wq-tab"        id="wqtab-form"  onclick="switchWQTab('form')">✏️ One by One</button>
+        <button class="wq-tab"        id="wqtab-added" onclick="switchWQTab('added')">✅ Added (<span id="wqAddedCount">0</span>)</button>
+      </div>
+
+      <!-- JSON paste tab -->
+      <div id="wqpane-json">
+        <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);padding:14px;margin-bottom:14px;font-size:12px;color:var(--text2);line-height:1.7">
+          Paste a JSON array. Each object needs:
+          <code style="color:var(--cyan)">q</code>,
+          <code style="color:var(--cyan)">opts</code> (array of 4),
+          <code style="color:var(--cyan)">ans</code> (0–3),
+          <code style="color:var(--cyan)">topic</code>,
+          <code style="color:var(--cyan)">diff</code> (easy/medium/hard),
+          <code style="color:var(--cyan)">explain</code> (optional).<br>
+          <span style="color:var(--text3)">Example: <code>[{"q":"What is...","opts":["A","B","C","D"],"ans":0,"topic":"Basics","diff":"easy"}]</code></span>
+        </div>
+        <textarea id="wqJsonInput" rows="10" placeholder='[
+  {
+    "q": "What does len() return in Python?",
+    "opts": ["The length of an object", "Last index", "Number of attributes", "None"],
+    "ans": 0,
+    "topic": "Built-in Functions",
+    "diff": "easy",
+    "explain": "len() returns the number of items in an object."
+  }
+]' style="width:100%;background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);padding:12px;color:var(--text);font-family:'JetBrains Mono',monospace;font-size:12px;resize:vertical;line-height:1.5"></textarea>
+        <div style="display:flex;gap:10px;margin-top:12px;align-items:center">
+          <button class="btn btn-accent" onclick="parseWQJson()">⚡ Parse & Preview</button>
+          <span id="wqJsonMsg" style="font-size:12px"></span>
+        </div>
+        <div id="wqJsonPreview" style="margin-top:16px"></div>
+      </div>
+
+      <!-- Form (one by one) tab -->
+      <div id="wqpane-form" style="display:none">
+        <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:20px">
+          <div class="frow three">
+            <div class="fgroup">
+              <label>Topic *</label>
+              <input type="text" id="wqTopic" placeholder="e.g. Loops">
+            </div>
+            <div class="fgroup">
+              <label>Difficulty</label>
+              <select id="wqDiff">
+                <option value="easy">Easy</option>
+                <option value="medium">Medium</option>
+                <option value="hard">Hard</option>
+              </select>
+            </div>
+            <div class="fgroup">
+              <label>Correct Answer</label>
+              <select id="wqAns">
+                <option value="0">A</option>
+                <option value="1">B</option>
+                <option value="2">C</option>
+                <option value="3">D</option>
+              </select>
+            </div>
+          </div>
+          <div class="fgroup">
+            <label>Question *</label>
+            <textarea id="wqText" rows="3" placeholder="Enter the question text..."></textarea>
+          </div>
+          <div class="frow">
+            <div class="fgroup"><label>Option A *</label><input type="text" id="wqOpt0" placeholder="Option A"></div>
+            <div class="fgroup"><label>Option B *</label><input type="text" id="wqOpt1" placeholder="Option B"></div>
+          </div>
+          <div class="frow">
+            <div class="fgroup"><label>Option C *</label><input type="text" id="wqOpt2" placeholder="Option C"></div>
+            <div class="fgroup"><label>Option D *</label><input type="text" id="wqOpt3" placeholder="Option D"></div>
+          </div>
+          <div class="fgroup">
+            <label>Explanation (optional)</label>
+            <input type="text" id="wqExplain" placeholder="Why is this the correct answer?">
+          </div>
+          <button class="btn btn-accent" style="margin-top:4px" onclick="addWQFormEntry()">➕ Add to Set</button>
+          <span id="wqFormMsg" style="font-size:12px;margin-left:12px"></span>
+        </div>
+      </div>
+
+      <!-- Added questions tab -->
+      <div id="wqpane-added" style="display:none">
+        <div id="wqAddedList"></div>
+        <div id="wqAddedEmpty" style="text-align:center;padding:40px;color:var(--text3)">No questions added yet. Use JSON or the form.</div>
+      </div>
+
+    </div>
+
+    <!-- Footer -->
+    <div class="modal-footer" style="flex-shrink:0" id="setWizardFooter">
+      <button class="btn btn-outline" onclick="closeModal('modalAddSet')">Cancel</button>
+      <div style="display:flex;gap:8px;margin-left:auto">
+        <button class="btn btn-outline" id="wBtnBack"  onclick="wizardGo(1)" style="display:none">← Back</button>
+        <button class="btn btn-outline" id="wBtnNext"  onclick="wizardNext()">Next: Add Questions →</button>
+        <button class="btn btn-accent"  id="wBtnSave"  onclick="saveSet()"   style="display:none">💾 Save Set</button>
+        <button class="btn btn-green"   id="wBtnSaveQ" onclick="saveSetWithQuestions()" style="display:none">🚀 Save Set + Questions</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Add/Edit Question Modal -->
+<div class="modal-overlay" id="modalAddQ">
+  <div class="modal modal-xl">
+    <div class="modal-header">
+      <span style="font-size:22px">❓</span>
+      <h3 id="addQTitle">Add Question</h3>
+      <div class="modal-close" onclick="closeModal('modalAddQ')">✕</div>
+    </div>
+    <div class="modal-body">
+      <div class="tab-bar">
+        <button class="tab-btn active" onclick="switchQTab('single')">Single Question</button>
+        <button class="tab-btn" onclick="switchQTab('bulk')">Bulk Import (CSV)</button>
+      </div>
+      <div id="tabSingleQ" class="tab-panel active">
+        <div class="frow">
+          <div class="fgroup">
+            <label>Module *</label>
+            <select id="qModule">
+              <option value="">Select Module</option>
+            </select>
+          </div>
+          <div class="fgroup">
+            <label>Set Tag (optional)</label>
+            <select id="qSetTag">
+              <option value="">No Set Tag</option>
+            </select>
+          </div>
+        </div>
+        <div class="frow three">
+          <div class="fgroup">
+            <label>Topic</label>
+            <input type="text" id="qTopic" placeholder="e.g. Functions">
+          </div>
+          <div class="fgroup">
+            <label>Difficulty</label>
+            <select id="qDiff">
+              <option value="easy">Easy</option>
+              <option value="medium">Medium</option>
+              <option value="hard">Hard</option>
+            </select>
+          </div>
+          <div class="fgroup">
+            <label>Correct Answer (1-4)</label>
+            <select id="qAns">
+              <option value="0">Option A</option>
+              <option value="1">Option B</option>
+              <option value="2">Option C</option>
+              <option value="3">Option D</option>
+            </select>
+          </div>
+        </div>
+        <div class="fgroup">
+          <label>Question Text *</label>
+          <textarea id="qText" rows="3" placeholder="Enter the question text here..."></textarea>
+        </div>
+        <div class="frow">
+          <div class="fgroup">
+            <label>Option A *</label>
+            <input type="text" id="qOpt0" placeholder="Option A">
+          </div>
+          <div class="fgroup">
+            <label>Option B *</label>
+            <input type="text" id="qOpt1" placeholder="Option B">
+          </div>
+        </div>
+        <div class="frow">
+          <div class="fgroup">
+            <label>Option C *</label>
+            <input type="text" id="qOpt2" placeholder="Option C">
+          </div>
+          <div class="fgroup">
+            <label>Option D *</label>
+            <input type="text" id="qOpt3" placeholder="Option D">
+          </div>
+        </div>
+        <div class="fgroup">
+          <label>Explanation (optional)</label>
+          <textarea id="qExplain" rows="2" placeholder="Explain the correct answer..."></textarea>
+        </div>
+      </div>
+      <div id="tabBulkQ" class="tab-panel">
+        <div style="margin-bottom:14px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);padding:14px">
+          <p style="font-size:12px;font-weight:700;color:var(--accent2);margin-bottom:8px">📋 Expected CSV Format</p>
+          <code style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text2);display:block;white-space:pre">moduleId, topic, diff, q, optA, optB, optC, optD, ans, explain, setTag
+1, Functions, easy, What does len() return?, Length, Size, Count, Index, 1, len() returns the number of items, SET_01</code>
+          <p style="font-size:11px;color:var(--text3);margin-top:8px">• ans = 1..4 (1=A, 2=B, 3=C, 4=D) • setTag is optional</p>
+        </div>
+        <div class="frow" style="margin-bottom:14px">
+          <div class="fgroup">
+            <label>Default Module (if not in CSV)</label>
+            <select id="bulkQModule">
+              <option value="">Use CSV column</option>
+            </select>
+          </div>
+        </div>
+        <div class="drop-zone" id="qDropZone" onclick="document.getElementById('qCsvFile').click()"
+          ondragover="event.preventDefault();this.classList.add('drag-over')"
+          ondragleave="this.classList.remove('drag-over')"
+          ondrop="handleQDrop(event)">
+          <div class="dz-icon">📂</div>
+          <strong>Drop CSV file here or click to browse</strong>
+          <p>Supports 9, 10, or 13-column formats</p>
+        </div>
+        <input type="file" id="qCsvFile" accept=".csv" style="display:none" onchange="handleQFile(event)">
+        <div id="bulkQPreview" style="margin-top:14px"></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('modalAddQ')">Cancel</button>
+      <button class="btn btn-accent" onclick="saveQuestion()">💾 Save Question</button>
+    </div>
+  </div>
+</div>
+
+<!-- Confirm Modal -->
+<div class="modal-overlay" id="modalConfirm">
+  <div class="modal" style="max-width:420px">
+    <div class="modal-header">
+      <span style="font-size:22px" id="confirmIcon">⚠️</span>
+      <h3 id="confirmTitle">Confirm</h3>
+      <div class="modal-close" onclick="closeModal('modalConfirm')">✕</div>
+    </div>
+    <div class="modal-body">
+      <p id="confirmMsg" style="color:var(--text2);font-size:14px;line-height:1.6"></p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('modalConfirm')">Cancel</button>
+      <button class="btn btn-danger" id="confirmOkBtn">Confirm</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add Module Modal -->
+<div class="modal-overlay" id="modalAddModule">
+  <div class="modal">
+    <div class="modal-header">
+      <span style="font-size:22px">📚</span>
+      <h3 id="addModuleTitle">Add Module</h3>
+      <div class="modal-close" onclick="closeModal('modalAddModule')">✕</div>
+    </div>
+    <div class="modal-body">
+      <div class="frow">
+        <div class="fgroup">
+          <label>Module ID (number) *</label>
+          <input type="number" id="modId" placeholder="15">
+        </div>
+        <div class="fgroup">
+          <label>Icon (emoji)</label>
+          <input type="text" id="modIcon" placeholder="📚">
+        </div>
+      </div>
+      <div class="fgroup">
+        <label>Module Name *</label>
+        <input type="text" id="modName" placeholder="e.g. Data Visualization">
+      </div>
+      <div class="fgroup">
+        <label>Description</label>
+        <textarea id="modDesc" rows="2" placeholder="Brief description..."></textarea>
+      </div>
+      <div class="fgroup">
+        <label>Topics (comma-separated)</label>
+        <textarea id="modTopics" rows="2" placeholder="Topic 1, Topic 2, Topic 3..."></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('modalAddModule')">Cancel</button>
+      <button class="btn btn-accent" onclick="saveModule()">💾 Save Module</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- Assign Questions to Set Modal -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<div class="modal-overlay" id="modalAssignQ">
+  <div class="modal modal-xl" style="max-width:860px;max-height:90vh;display:flex;flex-direction:column">
+    <div class="modal-header" style="flex-shrink:0">
+      <span style="font-size:22px">📎</span>
+      <h3 id="assignQTitle">Assign Questions to Set</h3>
+      <div class="modal-close" onclick="closeModal('modalAssignQ')">✕</div>
+    </div>
+    <div style="padding:16px 24px;background:var(--bg2);border-bottom:1px solid var(--border);flex-shrink:0;display:flex;gap:12px;align-items:center;flex-wrap:wrap">
+      <input type="text" id="assignQSearch" placeholder="🔍 Search questions..." class="search-input" style="flex:1;min-width:180px" oninput="filterAssignQ()">
+      <select id="assignQDiff" class="filter-select" onchange="filterAssignQ()">
+        <option value="">All Difficulties</option>
+        <option value="easy">Easy</option>
+        <option value="medium">Medium</option>
+        <option value="hard">Hard</option>
+      </select>
+      <select id="assignQTopic" class="filter-select" onchange="filterAssignQ()">
+        <option value="">All Topics</option>
+      </select>
+      <span id="assignQCountLabel" style="font-size:12px;color:var(--text3);white-space:nowrap"></span>
+    </div>
+    <div style="padding:10px 24px;background:var(--bg3);border-bottom:1px solid var(--border);flex-shrink:0;display:flex;gap:10px;align-items:center">
+      <button class="btn btn-outline btn-sm" onclick="selectAllAssignQ()">☑ Select All Visible</button>
+      <button class="btn btn-outline btn-sm" onclick="clearAllAssignQ()">☐ Deselect All</button>
+      <span id="assignSelectedCount" style="font-size:12px;color:var(--accent);font-weight:700;margin-left:8px"></span>
+      <div style="margin-left:auto;display:flex;gap:8px;align-items:center">
+        <span style="font-size:12px;color:var(--text3)">Currently tagged to this set:</span>
+        <span id="assignCurrentCount" style="font-size:13px;color:var(--green);font-weight:700"></span>
+      </div>
+    </div>
+    <div id="assignQList" style="flex:1;overflow-y:auto;padding:16px 24px"></div>
+    <div class="modal-footer" style="flex-shrink:0">
+      <button class="btn btn-outline" onclick="closeModal('modalAssignQ')">Cancel</button>
+      <button class="btn btn-purple btn-sm" onclick="removeAllFromSet()" style="margin-right:auto">🗑 Remove All from Set</button>
+      <button class="btn btn-accent" onclick="saveAssignQ()">💾 Save Assignments</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ════════════════════════════════════════════════════════════════
+// GLOBALS
+// ════════════════════════════════════════════════════════════════
+let SB = null; // Supabase client
+let currentUser = null; // { id, name, role: 'admin'|'student' }
+let adminSection = 'dashboard';
+let studentSection = 'modules';
+
+// Test state
+let testState = {
+  questions: [], answers: [], marked: [], current: 0,
+  startTime: null, timerInterval: null, timerSeconds: 0,
+  set: null, module: null, submitted: false
+};
+
+// Cache
+let cache = { modules: [], students: [], sets: [], scores: [] };
+
+// Achievement definitions
+const ACHIEVEMENTS = [
+  { id:'first_test',    icon:'🎯', name:'First Test',       desc:'Complete your first test',           check: s => s.totalTests >= 1 },
+  { id:'perfect_score', icon:'💯', name:'Perfect Score',    desc:'Score 100% on any test',              check: s => s.maxPct >= 100 },
+  { id:'streak_5',      icon:'🔥', name:'On Fire!',         desc:'Complete 5 tests in a row',           check: s => s.totalTests >= 5 },
+  { id:'century',       icon:'💪', name:'Century',          desc:'Complete 100 questions total',         check: s => s.totalQs >= 100 },
+  { id:'top_scorer',    icon:'👑', name:'Top Scorer',       desc:'Rank #1 on leaderboard',              check: s => s.rank === 1 },
+  { id:'module_master', icon:'🏆', name:'Module Master',    desc:'Complete all sets in a module',       check: s => s.modulesCompleted >= 1 },
+  { id:'speed_demon',   icon:'⚡', name:'Speed Demon',      desc:'Finish a test in under 10 minutes',   check: s => s.minTime <= 600 },
+  { id:'consistent',    icon:'📈', name:'Consistent',       desc:'Score 80%+ on 3 tests',               check: s => s.highScoreCount >= 3 },
+  { id:'explorer',      icon:'🗺️', name:'Explorer',         desc:'Attempt 3 different modules',         check: s => s.modulesAttempted >= 3 },
+  { id:'daily_learner', icon:'📅', name:'Daily Learner',    desc:'Practice for 7 days',                 check: s => s.activeDays >= 7 },
+  { id:'fast_fingers',  icon:'⌨️', name:'Fast Fingers',     desc:'Answer 20 questions under 30s each',  check: s => s.fastAnswers >= 20 },
+  { id:'never_give_up', icon:'🦁', name:'Never Give Up',    desc:'Complete 10 tests total',             check: s => s.totalTests >= 10 },
+];
+
+const MODULE_COLORS = [
+  ['#4f8ef7','#6fa3ff'],['#a855f7','#c084fc'],['#22c55e','#4ade80'],
+  ['#f59e0b','#fcd34d'],['#06b6d4','#22d3ee'],['#f97316','#fb923c'],
+  ['#ec4899','#f472b6'],['#14b8a6','#2dd4bf'],['#8b5cf6','#a78bfa'],
+  ['#ef4444','#f87171'],['#0ea5e9','#38bdf8'],['#84cc16','#a3e635'],
+  ['#d946ef','#e879f9'],['#f43f5e','#fb7185'],['#64748b','#94a3b8']
+];
+
+// ════════════════════════════════════════════════════════════════
+// SUPABASE INIT — credentials hardcoded for deployment
+// ════════════════════════════════════════════════════════════════
+const SUPABASE_URL = 'https://cdefohsbowuuafbohiyc.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_RxOKU9t5jG9o3rRtkCRcAw_cbHu76vP';
+
+function initSupabase() {
+  // No-op: credentials are hardcoded
+}
+
+async function tryAutoConnect() {
+  try {
+    SB = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    const saved = localStorage.getItem('pgcp_user');
+    if (saved) {
+      currentUser = JSON.parse(saved);
+      if (currentUser.role === 'admin') launchAdmin();
+      else launchStudent();
+    } else {
+      showPage('loginPage');
+    }
+  } catch(e) {
+    console.error('Supabase connection failed:', e);
+    toast('Database connection error. Please contact admin.', 'error');
+    showPage('loginPage');
+  }
+}
+
+// ════════════════════════════════════════════════════════════════
+// AUTH
+// ════════════════════════════════════════════════════════════════
+let loginMode = 'student';
+function switchLoginTab(mode) {
+  loginMode = mode;
+  document.querySelectorAll('.login-tab').forEach((t,i) => t.classList.toggle('active', (i===0&&mode==='student')||(i===1&&mode==='admin')));
+  document.getElementById('studentLoginForm').style.display = mode === 'student' ? '' : 'none';
+  document.getElementById('adminLoginForm').style.display = mode === 'admin' ? '' : 'none';
+}
+
+async function doLogin() {
+  const err = document.getElementById('loginError');
+  err.style.display = 'none';
+  const showErr = msg => { err.textContent = msg; err.style.display = 'block'; };
+
+  if (loginMode === 'admin') {
+    const id = document.getElementById('adminId').value.trim();
+    const pass = document.getElementById('adminPass').value.trim();
+    // Check config table
+    const { data } = await SB.from('config').select('value').eq('key','adminPass').single();
+    const adminPass = data?.value || 'admin123';
+    if ((id === '0000' || id === 'admin') && pass === adminPass) {
+      currentUser = { id:'admin', name:'Administrator', role:'admin' };
+      localStorage.setItem('pgcp_user', JSON.stringify(currentUser));
+      launchAdmin();
+    } else showErr('Invalid admin credentials');
+    return;
+  }
+
+  // Student login
+  const sid = document.getElementById('loginId').value.trim();
+  const spass = document.getElementById('loginPass').value.trim();
+  if (!sid || !spass) return showErr('Enter enrollment ID and password');
+
+  const { data: student, error } = await SB.from('students').select('*').eq('id', sid).single();
+  if (error || !student) return showErr('Enrollment ID not found');
+  if (student.status === 'inactive') return showErr('Account is inactive. Contact admin.');
+
+  const expectedPass = student.pass || student.name.split(' ')[0].toLowerCase();
+  if (spass !== expectedPass) return showErr('Incorrect password');
+
+  currentUser = { id: student.id, name: student.name, role: 'student' };
+  localStorage.setItem('pgcp_user', JSON.stringify(currentUser));
+  launchStudent();
+}
+
+function doLogout() {
+  localStorage.removeItem('pgcp_user');
+  currentUser = null;
+  stopTest();
+  showPage('loginPage');
+}
+
+// ════════════════════════════════════════════════════════════════
+// LAUNCH
+// ════════════════════════════════════════════════════════════════
+async function launchAdmin() {
+  showPage('adminPage');
+  await loadModulesCache();
+  adminNav('dashboard');
+}
+
+async function launchStudent() {
+  showPage('studentPage');
+  document.getElementById('studentAvatar').textContent = currentUser.name[0].toUpperCase();
+  document.getElementById('studentNameDisplay').textContent = currentUser.name;
+  document.getElementById('studentIdDisplay').textContent = currentUser.id;
+  await loadModulesCache();
+  studentNav('modules');
+}
+
+// ════════════════════════════════════════════════════════════════
+// CACHE LOADERS
+// ════════════════════════════════════════════════════════════════
+async function loadModulesCache() {
+  try {
+    const { data, error } = await SB.from('modules').select('*').order('id');
+    if (error) { console.warn('loadModulesCache error:', error.message); cache.modules = []; return; }
+    cache.modules = data || [];
+  } catch(e) { console.warn('loadModulesCache exception:', e); cache.modules = []; }
+}
+async function loadStudentsCache() {
+  const { data } = await SB.from('students').select('*').order('name');
+  cache.students = data || [];
+}
+async function loadSetsCache() {
+  try {
+    const { data, error } = await SB.from('sets').select('*').order('created', { ascending: false });
+    if (error) { console.warn('loadSetsCache error:', error.message); cache.sets = []; return; }
+    cache.sets = data || [];
+  } catch(e) { console.warn('loadSetsCache exception:', e); cache.sets = []; }
+}
+async function loadScoresCache() {
+  try {
+    // If student, only load their own scores (avoids RLS block + perf)
+    let query = SB.from('scores').select('*').order('date', { ascending: false });
+    if (currentUser?.role === 'student') {
+      query = query.eq('studentId', currentUser.id);
+    }
+    const { data, error } = await query;
+    if (error) { console.warn('loadScoresCache error:', error.message); cache.scores = []; return; }
+    cache.scores = data || [];
+  } catch(e) { console.warn('loadScoresCache exception:', e); cache.scores = []; }
+}
+
+// ════════════════════════════════════════════════════════════════
+// PAGE ROUTING
+// ════════════════════════════════════════════════════════════════
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+// ════════════════════════════════════════════════════════════════
+// ADMIN NAVIGATION
+// ════════════════════════════════════════════════════════════════
+async function adminNav(section) {
+  adminSection = section;
+  document.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active'));
+  event?.target?.closest('.sidebar-item')?.classList.add('active');
+  const content = document.getElementById('adminContent');
+  content.innerHTML = '<div class="spinner"></div>';
+  const map = {
+    dashboard: renderAdminDashboard,
+    students: renderAdminStudents,
+    modules: renderAdminModules,
+    sets: renderAdminSets,
+    questions: renderAdminQuestions,
+    scores: renderAdminScores,
+    badges: renderAdminBadges,
+    analytics: renderAdminAnalytics,
+    leaderboard: renderAdminLeaderboard,
+    settings: renderAdminSettings,
+  };
+  (map[section] || renderAdminDashboard)();
+}
+
+// ════════════════════════════════════════════════════════════════
+// ADMIN: DASHBOARD
+// ════════════════════════════════════════════════════════════════
+async function renderAdminDashboard() {
+  await Promise.all([loadStudentsCache(), loadSetsCache(), loadScoresCache()]);
+  const { count: qCount } = await SB.from('mcq_bank').select('*', { count: 'exact', head: true });
+  const activeSets = cache.sets.filter(s => s.status === 'published').length;
+  const avgPct = cache.scores.length ? Math.round(cache.scores.reduce((a,b) => a + (b.pct||0), 0) / cache.scores.length) : 0;
+
+  const el = document.getElementById('adminContent');
+  el.innerHTML = `
+    <div class="section-header">
+      <div>
+        <h2>Dashboard</h2>
+        <p>Platform overview and quick stats</p>
+      </div>
+      <div class="hd-right">
+        <span style="font-size:12px;color:var(--text3)">${new Date().toLocaleDateString('en-IN',{weekday:'long',year:'numeric',month:'long',day:'numeric'})}</span>
+      </div>
+    </div>
+    <div class="stat-grid">
+      <div class="stat-card blue">
+        <div class="stat-icon">👥</div>
+        <div class="stat-label">Total Students</div>
+        <div class="stat-val">${cache.students.length}</div>
+        <div class="stat-sub">${cache.students.filter(s=>s.status==='active').length} active</div>
+      </div>
+      <div class="stat-card purple">
+        <div class="stat-icon">📚</div>
+        <div class="stat-label">Modules</div>
+        <div class="stat-val">${cache.modules.length}</div>
+        <div class="stat-sub">${activeSets} published sets</div>
+      </div>
+      <div class="stat-card green">
+        <div class="stat-icon">❓</div>
+        <div class="stat-label">Questions</div>
+        <div class="stat-val">${(qCount||0).toLocaleString()}</div>
+        <div class="stat-sub">In MCQ bank</div>
+      </div>
+      <div class="stat-card yellow">
+        <div class="stat-icon">🎯</div>
+        <div class="stat-label">Tests Taken</div>
+        <div class="stat-val">${cache.scores.length}</div>
+        <div class="stat-sub">Avg score: ${avgPct}%</div>
+      </div>
+      <div class="stat-card cyan">
+        <div class="stat-icon">📝</div>
+        <div class="stat-label">Total Sets</div>
+        <div class="stat-val">${cache.sets.length}</div>
+        <div class="stat-sub">${cache.sets.filter(s=>s.status==='draft').length} drafts</div>
+      </div>
+      <div class="stat-card orange">
+        <div class="stat-icon">🏆</div>
+        <div class="stat-label">Pass Rate</div>
+        <div class="stat-val">${cache.scores.length ? Math.round(cache.scores.filter(s=>s.pct>=60).length/cache.scores.length*100) : 0}%</div>
+        <div class="stat-sub">Passmark: 60%</div>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+      <div class="card">
+        <div class="card-inner">
+          <div class="chart-title">📊 Recent Test Scores</div>
+          <canvas id="dashScoreChart" height="200"></canvas>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-inner">
+          <div class="chart-title">📚 Questions per Module</div>
+          <canvas id="dashModuleChart" height="200"></canvas>
+        </div>
+      </div>
+    </div>
+    <div style="margin-top:20px">
+      <div class="card">
+        <div class="card-inner">
+          <div class="chart-title">🕐 Recent Activity</div>
+          ${cache.scores.slice(0,8).map(s=>`
+            <div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border)">
+              <div class="nav-avatar" style="width:32px;height:32px;font-size:12px">${(s.studentName||'?')[0]}</div>
+              <div style="flex:1">
+                <div style="font-size:13px;font-weight:600">${s.studentName||s.studentId}</div>
+                <div style="font-size:11px;color:var(--text2)">${s.moduleName} · ${s.setName}</div>
+              </div>
+              <div class="badge ${s.pct>=60?'badge-green':'badge-red'}">${s.pct}%</div>
+              <div style="font-size:11px;color:var(--text3)">${new Date(s.date).toLocaleDateString()}</div>
+            </div>
+          `).join('')||'<div class="empty-state"><p>No tests taken yet</p></div>'}
+        </div>
+      </div>
+    </div>
+  `;
+
+  // Charts
+  setTimeout(() => {
+    const scoreCtx = document.getElementById('dashScoreChart');
+    if (scoreCtx && cache.scores.length) {
+      const last10 = cache.scores.slice(0,10).reverse();
+      new Chart(scoreCtx, {
+        type:'line',
+        data:{
+          labels: last10.map(s=>s.studentName?.split(' ')[0]||s.studentId),
+          datasets:[{
+            label:'Score %',
+            data: last10.map(s=>s.pct),
+            borderColor:'#4f8ef7',fill:true,
+            backgroundColor:'rgba(79,142,247,0.1)',
+            tension:0.4,pointBackgroundColor:'#4f8ef7',pointRadius:4
+          }]
+        },
+        options:{responsive:true,plugins:{legend:{display:false}},scales:{y:{min:0,max:100,grid:{color:'rgba(255,255,255,0.05)'},ticks:{color:'#6b75a0'}},x:{grid:{display:false},ticks:{color:'#6b75a0',maxRotation:45}}}}
+      });
+    }
+    const modCtx = document.getElementById('dashModuleChart');
+    if (modCtx) {
+      SB.from('mcq_bank').select('moduleId').then(({data}) => {
+        if (!data) return;
+        const counts = {};
+        data.forEach(q => { const n = parseInt(q.moduleId); counts[n] = (counts[n]||0)+1; });
+        const mods = cache.modules.filter(m => counts[m.id]);
+        new Chart(modCtx, {
+          type:'bar',
+          data:{
+            labels: mods.map(m=>m.icon+' '+m.name.split(' ')[0]),
+            datasets:[{
+              label:'Questions',
+              data: mods.map(m=>counts[m.id]||0),
+              backgroundColor: mods.map((_,i)=>MODULE_COLORS[i%MODULE_COLORS.length][0]+'cc'),
+              borderRadius:6
+            }]
+          },
+          options:{responsive:true,plugins:{legend:{display:false}},scales:{y:{grid:{color:'rgba(255,255,255,0.05)'},ticks:{color:'#6b75a0'}},x:{grid:{display:false},ticks:{color:'#6b75a0',maxRotation:45}}}}
+        });
+      });
+    }
+  }, 100);
+}
+
+// ════════════════════════════════════════════════════════════════
+// ADMIN: STUDENTS
+// ════════════════════════════════════════════════════════════════
+async function renderAdminStudents() {
+  await loadStudentsCache();
+  const el = document.getElementById('adminContent');
+  el.innerHTML = `
+    <div class="section-header">
+      <div><h2>Students</h2><p>Manage enrolled students</p></div>
+      <div class="hd-right">
+        <button class="btn btn-outline btn-sm" onclick="exportStudents()">📥 Export CSV</button>
+        <button class="btn btn-accent" onclick="openAddStudent()">+ Add Student</button>
+      </div>
+    </div>
+    <div class="filter-bar">
+      <input type="text" class="search-input" id="studentSearch" placeholder="🔍 Search by name or ID..." oninput="filterStudents()">
+      <select class="filter-select" id="studentStatusFilter" onchange="filterStudents()">
+        <option value="">All Status</option>
+        <option value="active">Active</option>
+        <option value="inactive">Inactive</option>
+      </select>
+      <span id="studentCount" style="font-size:12px;color:var(--text3);margin-left:4px"></span>
+    </div>
+    <div class="card">
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr>
+            <th>#</th><th>ID</th><th>Name</th><th>Password</th><th>Status</th><th>Tests</th><th>Avg Score</th><th>Actions</th>
+          </tr></thead>
+          <tbody id="studentTbody"></tbody>
+        </table>
+      </div>
+    </div>
+  `;
+  filterStudents();
+}
+
+function filterStudents() {
+  const q = (document.getElementById('studentSearch')?.value||'').toLowerCase();
+  const st = document.getElementById('studentStatusFilter')?.value||'';
+  const filtered = cache.students.filter(s =>
+    (!q || s.name.toLowerCase().includes(q) || s.id.toLowerCase().includes(q)) &&
+    (!st || s.status === st)
+  );
+  document.getElementById('studentCount').textContent = `${filtered.length} student${filtered.length!==1?'s':''}`;
+
+  // Join with scores
+  const scoreMap = {};
+  cache.scores.forEach(s => {
+    if (!scoreMap[s.studentId]) scoreMap[s.studentId] = { count:0, total:0 };
+    scoreMap[s.studentId].count++;
+    scoreMap[s.studentId].total += s.pct||0;
+  });
+
+  const tbody = document.getElementById('studentTbody');
+  if (!tbody) return;
+  tbody.innerHTML = filtered.map((s,i) => {
+    const sm = scoreMap[s.id]||{count:0,total:0};
+    const avg = sm.count ? Math.round(sm.total/sm.count) : '-';
+    return `
+      <tr>
+        <td style="color:var(--text3);font-size:12px">${i+1}</td>
+        <td><code style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--cyan)">${s.id}</code></td>
+        <td>
+          <div style="display:flex;align-items:center;gap:8px">
+            <div class="nav-avatar" style="width:30px;height:30px;font-size:12px;background:${MODULE_COLORS[s.name.length%MODULE_COLORS.length].join(',')}">${s.name[0]}</div>
+            <span style="font-weight:600">${s.name}</span>
+          </div>
+        </td>
+        <td style="color:var(--text3);font-size:12px">${s.pass||'(first name)'}</td>
+        <td><span class="badge ${s.status==='active'?'badge-green':'badge-red'}">${s.status||'active'}</span></td>
+        <td style="font-weight:600">${sm.count}</td>
+        <td>${avg !== '-' ? `<span class="badge ${avg>=60?'badge-green':'badge-red'}">${avg}%</span>` : '<span class="badge badge-gray">-</span>'}</td>
+        <td>
+          <div style="display:flex;gap:6px">
+            <button class="btn btn-outline btn-sm" onclick="editStudent('${s.id}')">✏️</button>
+            <button class="btn btn-danger btn-sm" onclick="deleteStudent('${s.id}','${s.name}')">🗑</button>
+          </div>
+        </td>
+      </tr>`;
+  }).join('') || '<tr><td colspan="8"><div class="empty-state"><div class="icon">👥</div><h3>No students found</h3><p>Add students to get started</p></div></td></tr>';
+}
+
+function openAddStudent() {
+  document.getElementById('addStudentTitle').textContent = 'Add Student';
+  document.getElementById('sId').value = '';
+  document.getElementById('sName').value = '';
+  document.getElementById('sPass').value = '';
+  document.getElementById('sStatus').value = 'active';
+  document.getElementById('bulkStudentPreview').innerHTML = '';
+  openModal('modalAddStudent');
+}
+
+let studentEditId = null;
+function editStudent(id) {
+  const s = cache.students.find(x => x.id === id);
+  if (!s) return;
+  studentEditId = id;
+  document.getElementById('addStudentTitle').textContent = 'Edit Student';
+  document.getElementById('sId').value = s.id;
+  document.getElementById('sId').disabled = true;
+  document.getElementById('sName').value = s.name;
+  document.getElementById('sPass').value = s.pass || '';
+  document.getElementById('sStatus').value = s.status || 'active';
+  openModal('modalAddStudent');
+}
+
+async function saveStudent() {
+  const id = document.getElementById('sId').value.trim();
+  const name = document.getElementById('sName').value.trim();
+  const pass = document.getElementById('sPass').value.trim();
+  const status = document.getElementById('sStatus').value;
+
+  // Check if bulk tab is active
+  if (document.getElementById('tabBulkStudent').classList.contains('active')) {
+    return saveBulkStudents();
+  }
+
+  if (!id || !name) return toast('ID and Name are required', 'error');
+  const rec = { id, name, pass: pass || name.split(' ')[0].toLowerCase(), status };
+  const { error } = studentEditId
+    ? await SB.from('students').update({ name, pass: rec.pass, status }).eq('id', id)
+    : await SB.from('students').insert(rec);
+  if (error) return toast('Error: ' + error.message, 'error');
+  toast(studentEditId ? 'Student updated!' : 'Student added!', 'success');
+  studentEditId = null;
+  document.getElementById('sId').disabled = false;
+  closeModal('modalAddStudent');
+  await loadStudentsCache();
+  filterStudents();
+}
+
+let bulkStudentRows = [];
+function handleStudentDrop(e) {
+  e.preventDefault();
+  document.getElementById('studentDropZone').classList.remove('drag-over');
+  handleStudentFile({ target: { files: e.dataTransfer.files } });
+}
+function handleStudentFile(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    const lines = ev.target.result.replace(/\r/g,'').split('\n').filter(l => l.trim());
+    bulkStudentRows = [];
+    const startIdx = lines[0].toLowerCase().includes('id') ? 1 : 0;
+    for (let i = startIdx; i < lines.length; i++) {
+      const [id, name, pass] = lines[i].split(',').map(x => x.trim());
+      if (id && name) bulkStudentRows.push({ id, name, pass: pass || name.split(' ')[0].toLowerCase(), status: 'active' });
+    }
+    const preview = document.getElementById('bulkStudentPreview');
+    preview.innerHTML = `
+      <div class="badge badge-green" style="margin-bottom:10px">✓ ${bulkStudentRows.length} students ready to import</div>
+      <div class="card" style="max-height:200px;overflow-y:auto">
+        <table><thead><tr><th>ID</th><th>Name</th><th>Password</th></tr></thead>
+        <tbody>${bulkStudentRows.slice(0,20).map(s=>`<tr><td>${s.id}</td><td>${s.name}</td><td>${s.pass}</td></tr>`).join('')}</tbody>
+        </table>
+      </div>
+      ${bulkStudentRows.length>20?`<p style="font-size:11px;color:var(--text3);margin-top:6px">...and ${bulkStudentRows.length-20} more</p>`:''}`;
+  };
+  reader.readAsText(file);
+}
+
+async function saveBulkStudents() {
+  if (!bulkStudentRows.length) return toast('No students to import', 'error');
+  const { error } = await SB.from('students').upsert(bulkStudentRows, { onConflict: 'id' });
+  if (error) return toast('Import error: ' + error.message, 'error');
+  toast(`${bulkStudentRows.length} students imported!`, 'success');
+  bulkStudentRows = [];
+  closeModal('modalAddStudent');
+  await loadStudentsCache();
+  filterStudents();
+}
+
+async function deleteStudent(id, name) {
+  showConfirm(`Delete student "${name}" (${id})? This cannot be undone.`, async () => {
+    const { error } = await SB.from('students').delete().eq('id', id);
+    if (error) return toast('Error: ' + error.message, 'error');
+    toast('Student deleted', 'success');
+    await loadStudentsCache();
+    filterStudents();
+  });
+}
+
+async function exportStudents() {
+  const csv = ['id,name,pass,status', ...cache.students.map(s => `${s.id},${s.name},${s.pass||''},${s.status||'active'}`)].join('\n');
+  downloadFile(csv, 'students.csv', 'text/csv');
+}
+
+function switchStudentTab(tab) {
+  document.querySelectorAll('#modalAddStudent .tab-btn').forEach((b,i) => b.classList.toggle('active', (i===0&&tab==='single')||(i===1&&tab==='bulk')));
+  document.getElementById('tabSingleStudent').classList.toggle('active', tab==='single');
+  document.getElementById('tabBulkStudent').classList.toggle('active', tab==='bulk');
+}
+
+// ════════════════════════════════════════════════════════════════
+// ADMIN: MODULES
+// ════════════════════════════════════════════════════════════════
+async function renderAdminModules() {
+  const el = document.getElementById('adminContent');
+  el.innerHTML = `
+    <div class="section-header">
+      <div><h2>Modules</h2><p>Manage learning modules</p></div>
+      <div class="hd-right">
+        <button class="btn btn-accent" onclick="openAddModule()">+ Add Module</button>
+      </div>
+    </div>
+    <div class="module-grid" id="adminModuleGrid">
+      ${cache.modules.map((m,i) => {
+        const [c1,c2] = MODULE_COLORS[i%MODULE_COLORS.length];
+        const topics = typeof m.topics === 'string' ? JSON.parse(m.topics||'[]') : (m.topics||[]);
+        return `
+        <div class="mod-card" style="--c1:${c1};--c2:${c2}">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start">
+            <div class="mod-icon">${m.icon||'📚'}</div>
+            <div style="display:flex;gap:6px">
+              <button class="btn btn-outline btn-sm" onclick="editModule(${m.id})">✏️</button>
+              <button class="btn btn-danger btn-sm" onclick="deleteModule(${m.id},'${m.name}')">🗑</button>
+            </div>
+          </div>
+          <div class="mod-name">${m.name}</div>
+          <div class="mod-desc">${m.desc||''}</div>
+          <div class="mod-meta">
+            <span class="badge badge-blue">ID: ${m.id}</span>
+            <span class="badge badge-gray">${topics.length} topics</span>
+          </div>
+          <div style="margin-top:10px;display:flex;flex-wrap:wrap;gap:4px">
+            ${topics.slice(0,4).map(t=>`<span style="font-size:10px;background:rgba(255,255,255,0.05);border:1px solid var(--border);padding:2px 7px;border-radius:10px;color:var(--text2)">${t}</span>`).join('')}
+            ${topics.length>4?`<span style="font-size:10px;color:var(--text3)">+${topics.length-4} more</span>`:''}
+          </div>
+        </div>`;
+      }).join('')}
+    </div>
+  `;
+}
+
+function openAddModule() {
+  document.getElementById('addModuleTitle').textContent = 'Add Module';
+  ['modId','modName','modDesc','modTopics','modIcon'].forEach(id => document.getElementById(id).value = '');
+  openModal('modalAddModule');
+}
+
+let modEditId = null;
+function editModule(id) {
+  const m = cache.modules.find(x => x.id === id);
+  if (!m) return;
+  modEditId = id;
+  document.getElementById('addModuleTitle').textContent = 'Edit Module';
+  document.getElementById('modId').value = m.id;
+  document.getElementById('modId').disabled = true;
+  document.getElementById('modName').value = m.name;
+  document.getElementById('modDesc').value = m.desc||'';
+  document.getElementById('modIcon').value = m.icon||'';
+  const topics = typeof m.topics === 'string' ? JSON.parse(m.topics||'[]') : (m.topics||[]);
+  document.getElementById('modTopics').value = topics.join(', ');
+  openModal('modalAddModule');
+}
+
+async function saveModule() {
+  const id = parseInt(document.getElementById('modId').value);
+  const name = document.getElementById('modName').value.trim();
+  const desc = document.getElementById('modDesc').value.trim();
+  const icon = document.getElementById('modIcon').value.trim();
+  const topicsRaw = document.getElementById('modTopics').value;
+  const topics = topicsRaw.split(',').map(t=>t.trim()).filter(Boolean);
+
+  if (!name) return toast('Module name required', 'error');
+  const rec = { id: id||undefined, name, desc, icon: icon||'📚', topics };
+
+  const { error } = modEditId
+    ? await SB.from('modules').update({ name, desc, icon, topics }).eq('id', modEditId)
+    : await SB.from('modules').insert(rec);
+  if (error) return toast('Error: ' + error.message, 'error');
+  toast(modEditId ? 'Module updated!' : 'Module added!', 'success');
+  modEditId = null;
+  document.getElementById('modId').disabled = false;
+  closeModal('modalAddModule');
+  await loadModulesCache();
+  renderAdminModules();
+}
+
+async function deleteModule(id, name) {
+  showConfirm(`Delete module "${name}"? All associated data may be affected.`, async () => {
+    const { error } = await SB.from('modules').delete().eq('id', id);
+    if (error) return toast('Error: ' + error.message, 'error');
+    toast('Module deleted', 'success');
+    await loadModulesCache();
+    renderAdminModules();
+  });
+}
+
+// ════════════════════════════════════════════════════════════════
+// ADMIN: SETS
+// ════════════════════════════════════════════════════════════════
+async function renderAdminSets() {
+  await loadSetsCache();
+  const el = document.getElementById('adminContent');
+  el.innerHTML = `
+    <div class="section-header">
+      <div><h2>Question Sets</h2><p>Manage practice sets per module</p></div>
+      <div class="hd-right">
+        <select class="filter-select" id="setModuleFilter" onchange="filterSets()">
+          <option value="">All Modules</option>
+          ${cache.modules.map(m=>`<option value="${m.id}">${m.icon} ${m.name}</option>`).join('')}
+        </select>
+        <button class="btn btn-accent" onclick="openAddSet()">+ Create Set</button>
+      </div>
+    </div>
+    <div class="card">
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr>
+            <th>Set ID</th><th>Name</th><th>Module</th><th>Timer</th><th>Questions</th><th>Difficulty</th><th>Status</th><th>Actions</th>
+          </tr></thead>
+          <tbody id="setsTbody"></tbody>
+        </table>
+      </div>
+    </div>
+  `;
+  filterSets();
+}
+
+async function filterSets() {
+  const modFilter = document.getElementById('setModuleFilter')?.value;
+  const filtered = modFilter ? cache.sets.filter(s => String(s.moduleId) === String(modFilter)) : cache.sets;
+  const tbody = document.getElementById('setsTbody');
+  if (!tbody) return;
+  const mod = id => cache.modules.find(m => m.id === parseInt(id));
+  tbody.innerHTML = filtered.map(s => {
+    const m = mod(s.moduleId);
+    return `
+      <tr>
+        <td><code style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--cyan)">${s.id}</code></td>
+        <td style="font-weight:600">${s.name}</td>
+        <td>${m ? m.icon+' '+m.name : s.moduleId}</td>
+        <td>${s.timer||45} min</td>
+        <td>${s.qCount||50}</td>
+        <td><span class="badge badge-${s.diffMix==='easy'?'green':s.diffMix==='hard'?'red':s.diffMix==='medium'?'yellow':'blue'}">${s.diffMix||'mixed'}</span></td>
+        <td>
+          <select class="filter-select" style="font-size:11px;padding:3px 8px" onchange="updateSetStatus('${s.id}',this.value)">
+            <option ${s.status==='draft'?'selected':''} value="draft">Draft</option>
+            <option ${s.status==='published'?'selected':''} value="published">Published</option>
+            <option ${s.status==='archived'?'selected':''} value="archived">Archived</option>
+          </select>
+        </td>
+        <td>
+          <div style="display:flex;gap:6px">
+            <button class="btn btn-outline btn-sm" onclick="editSet('${s.id}')">✏️</button>
+            <button class="btn btn-accent btn-sm" onclick="openAssignQ('${s.id}','${s.name.replace(/'/g,"\\'")}',${s.moduleId})" title="Assign Questions to this Set">📎 Questions</button>
+            <button class="btn btn-danger btn-sm" onclick="deleteSet('${s.id}','${s.name}')">🗑</button>
+          </div>
+        </td>
+      </tr>`;
+  }).join('') || '<tr><td colspan="8"><div class="empty-state"><div class="icon">📝</div><h3>No sets found</h3><p>Create your first set</p></div></td></tr>';
+}
+
+async function updateSetStatus(id, status) {
+  const { error } = await SB.from('sets').update({ status }).eq('id', id);
+  if (error) toast('Error: ' + error.message, 'error');
+  else {
+    toast(`Set ${status}`, 'success');
+    const s = cache.sets.find(x => x.id === id);
+    if (s) s.status = status;
+  }
+}
+
+// ── WIZARD STATE ──
+let wizardQs = [];   // questions staged in step 2
+let setEditId = null;
+let wizardStep = 1;
+
+async function openAddSet() {
+  setEditId = null;
+  wizardQs = [];
+  wizardStep = 1;
+  document.getElementById('addSetTitle').textContent = 'Create Set';
+  document.getElementById('setWizardIcon').textContent = '📝';
+  document.getElementById('setModule').innerHTML = `<option value="">Select Module</option>${cache.modules.map(m=>`<option value="${m.id}">${m.icon} ${m.name}</option>`).join('')}`;
+  ['setId','setName','setDesc','setNotes'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('setTimer').value = '45';
+  document.getElementById('setQCount').value = '50';
+  document.getElementById('setDiff').value = 'mixed';
+  document.getElementById('setStatus').value = 'draft';
+  // Reset step 2
+  document.getElementById('wqJsonInput').value = '';
+  document.getElementById('wqJsonPreview').innerHTML = '';
+  document.getElementById('wqJsonMsg').textContent = '';
+  ['wqTopic','wqText','wqOpt0','wqOpt1','wqOpt2','wqOpt3','wqExplain'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('wqAddedCount').textContent = '0';
+  renderWizardAdded();
+  wizardShowStep(1);
+  openModal('modalAddSet');
+}
+
+function editSet(id) {
+  const s = cache.sets.find(x => x.id === id);
+  if (!s) return;
+  setEditId = id;
+  wizardQs = [];
+  wizardStep = 1;
+  document.getElementById('addSetTitle').textContent = 'Edit Set';
+  document.getElementById('setWizardIcon').textContent = '✏️';
+  document.getElementById('setModule').innerHTML = `<option value="">Select Module</option>${cache.modules.map(m=>`<option value="${m.id}" ${m.id===parseInt(s.moduleId)?'selected':''}>${m.icon} ${m.name}</option>`).join('')}`;
+  document.getElementById('setId').value = s.id;
+  document.getElementById('setName').value = s.name;
+  document.getElementById('setDesc').value = s.desc||'';
+  document.getElementById('setTimer').value = s.timer||45;
+  document.getElementById('setQCount').value = s.qCount||50;
+  document.getElementById('setDiff').value = s.diffMix||'mixed';
+  document.getElementById('setStatus').value = s.status||'draft';
+  document.getElementById('setNotes').value = s.notes||'';
+  document.getElementById('wqJsonInput').value = '';
+  document.getElementById('wqJsonPreview').innerHTML = '';
+  document.getElementById('wqJsonMsg').textContent = '';
+  document.getElementById('wqAddedCount').textContent = '0';
+  renderWizardAdded();
+  wizardShowStep(1);
+  openModal('modalAddSet');
+}
+
+function updateSetId() {
+  const modId = document.getElementById('setModule').value;
+  if (!modId || setEditId) return;
+  const existing = cache.sets.filter(s => String(s.moduleId) === String(modId));
+  const num = String(existing.length + 1).padStart(3, '0');
+  document.getElementById('setId').value = `MOD${modId}_SET${num}`;
+}
+
+function wizardShowStep(n) {
+  wizardStep = n;
+  document.getElementById('wizardPane1').style.display = n === 1 ? '' : 'none';
+  document.getElementById('wizardPane2').style.display = n === 2 ? '' : 'none';
+  document.getElementById('wstep1').className = 'wizard-step' + (n===1?' active':' done');
+  document.getElementById('wstep2').className = 'wizard-step' + (n===2?' active':'');
+  // Footer buttons
+  document.getElementById('wBtnBack').style.display  = n === 2 ? '' : 'none';
+  document.getElementById('wBtnNext').style.display  = n === 1 ? '' : 'none';
+  document.getElementById('wBtnSave').style.display  = n === 2 ? '' : (setEditId ? '' : 'none');
+  document.getElementById('wBtnSaveQ').style.display = n === 2 ? '' : 'none';
+  // "Save Set only" label
+  if (n === 2) {
+    document.getElementById('wBtnSave').textContent = '💾 Save (no questions)';
+  }
+}
+
+function wizardGo(n) {
+  if (n === 2) return wizardNext();
+  wizardShowStep(1);
+}
+
+function wizardNext() {
+  const moduleId = document.getElementById('setModule').value;
+  const name = document.getElementById('setName').value.trim();
+  if (moduleId === '' || moduleId === null || moduleId === undefined) return toast('Please select a module first', 'error');
+  if (!name) return toast('Set name is required', 'error');
+  if (!document.getElementById('setId').value) updateSetId();
+  wizardShowStep(2);
+  switchWQTab('json');
+}
+
+// ── STEP 2: QUESTION TABS ──
+function switchWQTab(tab) {
+  ['json','form','added'].forEach(t => {
+    document.getElementById('wqtab-'+t).classList.toggle('active', t===tab);
+    document.getElementById('wqpane-'+t).style.display = t===tab ? '' : 'none';
+  });
+  if (tab === 'added') renderWizardAdded();
+}
+
+function parseWQJson() {
+  const raw = document.getElementById('wqJsonInput').value.trim();
+  const msg = document.getElementById('wqJsonMsg');
+  const preview = document.getElementById('wqJsonPreview');
+  if (!raw) { msg.textContent = '⚠️ Paste JSON first'; msg.style.color='var(--yellow)'; return; }
+  let arr;
+  try { arr = JSON.parse(raw); } catch(e) { msg.textContent = '❌ Invalid JSON: '+e.message; msg.style.color='var(--red)'; preview.innerHTML=''; return; }
+  if (!Array.isArray(arr)) { msg.textContent = '❌ Must be a JSON array [...]'; msg.style.color='var(--red)'; return; }
+
+  const results = arr.map((item, i) => {
+    const valid = item.q && Array.isArray(item.opts) && item.opts.length===4 && typeof item.ans==='number';
+    return { ...item, _valid: valid, _idx: i };
+  });
+
+  const good = results.filter(r => r._valid).length;
+  const bad  = results.filter(r => !r._valid).length;
+  msg.textContent = `✅ ${good} valid${bad?' | ❌ '+bad+' invalid':''}`;
+  msg.style.color = bad ? 'var(--yellow)' : 'var(--green)';
+
+  preview.innerHTML = results.map(r => `
+    <div class="wq-preview-card ${r._valid?'valid':'invalid'}">
+      ${!r._valid ? `<div style="font-size:11px;color:var(--red);margin-bottom:6px">⚠️ Missing required fields (q, opts[4], ans)</div>` : ''}
+      <div class="wq-preview-q">${r._idx+1}. ${r.q||'<em>missing question text</em>'}</div>
+      ${r.opts ? `<div class="wq-preview-opts">${(r.opts||[]).map((o,oi)=>`<span class="wq-preview-opt ${oi===r.ans?'correct':''}">${String.fromCharCode(65+oi)}. ${o}</span>`).join('')}</div>` : ''}
+      <div style="display:flex;gap:10px;font-size:11px;color:var(--text3)">
+        <span>📌 ${r.topic||'General'}</span>
+        <span>🎯 ${r.diff||'easy'}</span>
+        ${r.explain?`<span>💡 ${r.explain.slice(0,60)}${r.explain.length>60?'…':''}</span>`:''}
+        ${r._valid?`<button class="btn btn-accent btn-sm" style="margin-left:auto;font-size:10px;padding:2px 8px" onclick="addWQFromPreview(${r._idx})">+ Add</button>`:''}
+      </div>
+    </div>`).join('');
+
+  // Auto-add all valid ones into staging
+  const toAdd = results.filter(r => r._valid);
+  if (toAdd.length) {
+    toAdd.forEach(r => {
+      if (!wizardQs.find(q => q.q === r.q)) wizardQs.push(r);
+    });
+    document.getElementById('wqAddedCount').textContent = wizardQs.length;
+    toast(`${toAdd.length} question${toAdd.length!==1?'s':''} staged — click "Save Set + Questions" to save`, 'success');
+  }
+}
+
+function addWQFromPreview(idx) {
+  const raw = document.getElementById('wqJsonInput').value.trim();
+  try {
+    const arr = JSON.parse(raw);
+    const item = arr[idx];
+    if (item && !wizardQs.find(q => q.q === item.q)) {
+      wizardQs.push(item);
+      document.getElementById('wqAddedCount').textContent = wizardQs.length;
+      toast('Question staged', 'success');
+    }
+  } catch(e) {}
+}
+
+function addWQFormEntry() {
+  const q    = document.getElementById('wqText').value.trim();
+  const opts = ['wqOpt0','wqOpt1','wqOpt2','wqOpt3'].map(id => document.getElementById(id).value.trim());
+  const topic = document.getElementById('wqTopic').value.trim() || 'General';
+  const diff  = document.getElementById('wqDiff').value;
+  const ans   = parseInt(document.getElementById('wqAns').value);
+  const explain = document.getElementById('wqExplain').value.trim();
+  const msg   = document.getElementById('wqFormMsg');
+
+  if (!q) { msg.textContent='⚠️ Question required'; msg.style.color='var(--red)'; return; }
+  if (opts.some(o=>!o)) { msg.textContent='⚠️ All 4 options required'; msg.style.color='var(--red)'; return; }
+
+  wizardQs.push({ q, opts, ans, topic, diff, explain });
+  document.getElementById('wqAddedCount').textContent = wizardQs.length;
+  msg.textContent = `✅ Added! (${wizardQs.length} total)`;
+  msg.style.color = 'var(--green)';
+
+  // Clear form for next entry
+  ['wqText','wqOpt0','wqOpt1','wqOpt2','wqOpt3','wqExplain'].forEach(id => document.getElementById(id).value='');
+  document.getElementById('wqTopic').focus();
+}
+
+function renderWizardAdded() {
+  const list = document.getElementById('wqAddedList');
+  const empty = document.getElementById('wqAddedEmpty');
+  document.getElementById('wqAddedCount').textContent = wizardQs.length;
+  if (!wizardQs.length) { list.innerHTML=''; empty.style.display=''; return; }
+  empty.style.display = 'none';
+  list.innerHTML = wizardQs.map((q, i) => `
+    <div class="wq-preview-card valid" style="display:flex;gap:12px;align-items:flex-start">
+      <div style="flex:1">
+        <div style="display:flex;gap:6px;margin-bottom:6px">
+          <span class="badge badge-gray" style="font-size:10px">${q.topic||'General'}</span>
+          <span class="badge badge-${q.diff==='easy'?'green':q.diff==='hard'?'red':'yellow'}" style="font-size:10px">${q.diff||'easy'}</span>
+        </div>
+        <div class="wq-preview-q">${i+1}. ${q.q}</div>
+        <div class="wq-preview-opts">${(q.opts||[]).map((o,oi)=>`<span class="wq-preview-opt ${oi===q.ans?'correct':''}">${String.fromCharCode(65+oi)}. ${o}</span>`).join('')}</div>
+      </div>
+      <button class="btn btn-danger btn-sm" style="flex-shrink:0;margin-top:2px" onclick="removeWizardQ(${i})">✕</button>
+    </div>`).join('');
+}
+
+function removeWizardQ(i) {
+  wizardQs.splice(i, 1);
+  renderWizardAdded();
+}
+
+async function saveSet() {
+  const moduleId = parseInt(document.getElementById('setModule').value);
+  const id = document.getElementById('setId').value.trim() || `MOD${moduleId}_SET${Date.now()}`;
+  const name = document.getElementById('setName').value.trim();
+  if (document.getElementById('setModule').value === '') return toast('Module required', 'error');
+  if (!name) return toast('Set name required', 'error');
+
+  const rec = {
+    id, moduleId, name,
+    desc: document.getElementById('setDesc').value.trim(),
+    timer: parseInt(document.getElementById('setTimer').value)||45,
+    qCount: parseInt(document.getElementById('setQCount').value)||50,
+    diffMix: document.getElementById('setDiff').value,
+    status: document.getElementById('setStatus').value,
+    notes: document.getElementById('setNotes').value.trim(),
+    created: setEditId ? undefined : new Date().toISOString()
+  };
+
+  const { error } = setEditId
+    ? await SB.from('sets').update(rec).eq('id', setEditId)
+    : await SB.from('sets').insert(rec);
+  if (error) return toast('Error: ' + error.message, 'error');
+  toast(setEditId ? 'Set updated!' : 'Set saved (no questions added)', 'success');
+  setEditId = null;
+  closeModal('modalAddSet');
+  await loadSetsCache();
+  filterSets();
+}
+
+async function saveSetWithQuestions() {
+  const moduleId = parseInt(document.getElementById('setModule').value);
+  const id = document.getElementById('setId').value.trim() || `MOD${moduleId}_SET${Date.now()}`;
+  const name = document.getElementById('setName').value.trim();
+  if (moduleId === 0 && document.getElementById('setModule').value === '') { wizardShowStep(1); return toast('Go back and fill Module + Name', 'error'); }
+  if (!name) { wizardShowStep(1); return toast('Set name is required', 'error'); }
+  if (!wizardQs.length) return toast('No questions staged yet — add some first', 'error');
+
+  const btn = document.getElementById('wBtnSaveQ');
+  btn.textContent = '⏳ Saving...'; btn.disabled = true;
+
+  try {
+    // 1. Save the set
+    const rec = {
+      id, moduleId, name,
+      desc: document.getElementById('setDesc').value.trim(),
+      timer: parseInt(document.getElementById('setTimer').value)||45,
+      qCount: wizardQs.length,
+      diffMix: document.getElementById('setDiff').value,
+      status: document.getElementById('setStatus').value,
+      notes: document.getElementById('setNotes').value.trim(),
+      created: setEditId ? undefined : new Date().toISOString()
+    };
+    const { error: setErr } = setEditId
+      ? await SB.from('sets').update(rec).eq('id', setEditId)
+      : await SB.from('sets').insert(rec);
+    if (setErr) throw new Error(setErr.message);
+
+    // 2. Insert all questions
+    const qRecs = wizardQs.map(q => ({
+      id: `Q_${Date.now()}_${Math.random().toString(36).slice(2,7)}`,
+      moduleId, setTag: id,
+      q: q.q, opts: q.opts,
+      ans: q.ans,
+      topic: q.topic || 'General',
+      diff: q.diff || 'easy',
+      explain: q.explain || ''
+    }));
+
+    // Insert in batches of 20 to avoid payload limits
+    for (let i = 0; i < qRecs.length; i += 20) {
+      const batch = qRecs.slice(i, i+20);
+      const { error: qErr } = await SB.from('mcq_bank').insert(batch);
+      if (qErr) throw new Error(qErr.message);
+    }
+
+    toast(`🎉 Set "${name}" + ${wizardQs.length} questions saved!`, 'success');
+    setEditId = null;
+    closeModal('modalAddSet');
+    await loadSetsCache();
+    filterSets();
+  } catch(e) {
+    toast('Error: ' + e.message, 'error');
+  } finally {
+    btn.textContent = '🚀 Save Set + Questions';
+    btn.disabled = false;
+  }
+}
+
+async function deleteSet(id, name) {
+  showConfirm(`Delete set "${name}"?`, async () => {
+    const { error } = await SB.from('sets').delete().eq('id', id);
+    if (error) return toast('Error: ' + error.message, 'error');
+    toast('Set deleted', 'success');
+    await loadSetsCache();
+    filterSets();
+  });
+}
+
+async function viewSetQuestions(setId, setName) {
+  // Legacy: redirect to new assign flow
+  const set = cache.sets.find(s => s.id === setId);
+  openAssignQ(setId, setName, set?.moduleId);
+}
+
+// ════════════════════════════════════════════════════════════════
+// ASSIGN QUESTIONS TO SET
+// ════════════════════════════════════════════════════════════════
+let assignState = { setId: null, setName: null, moduleId: null, allQ: [], filtered: [], taggedIds: new Set() };
+
+async function openAssignQ(setId, setName, moduleId) {
+  assignState.setId = setId;
+  assignState.setName = setName;
+  assignState.moduleId = parseInt(moduleId);
+
+  document.getElementById('assignQTitle').textContent = `Assign Questions → ${setName}`;
+  document.getElementById('assignQList').innerHTML = '<div class="spinner"></div>';
+  openModal('modalAssignQ');
+
+  // Load all questions for this module
+  const { data: qs } = await SB.from('mcq_bank').select('*').eq('moduleId', assignState.moduleId).order('topic');
+  assignState.allQ = qs || [];
+
+  // Find which are already tagged to this set
+  assignState.taggedIds = new Set((qs || []).filter(q => q.setTag === setId).map(q => q.id));
+
+  // Populate topic dropdown
+  const topics = [...new Set((qs||[]).map(q => q.topic).filter(Boolean))].sort();
+  document.getElementById('assignQTopic').innerHTML = `<option value="">All Topics</option>${topics.map(t=>`<option value="${t}">${t}</option>`).join('')}`;
+
+  document.getElementById('assignCurrentCount').textContent = assignState.taggedIds.size + ' questions';
+  renderAssignQList();
+}
+
+async function filterAssignQ() {
+  renderAssignQList();
+}
+
+function renderAssignQList() {
+  const search = (document.getElementById('assignQSearch')?.value || '').toLowerCase();
+  const diff   = document.getElementById('assignQDiff')?.value || '';
+  const topic  = document.getElementById('assignQTopic')?.value || '';
+
+  assignState.filtered = assignState.allQ.filter(q => {
+    if (diff  && q.diff  !== diff)  return false;
+    if (topic && q.topic !== topic) return false;
+    if (search && !q.q?.toLowerCase().includes(search) && !q.topic?.toLowerCase().includes(search)) return false;
+    return true;
+  });
+
+  const total = assignState.filtered.length;
+  const selected = assignState.filtered.filter(q => assignState.taggedIds.has(q.id)).length;
+  document.getElementById('assignQCountLabel').textContent = `${total} questions shown`;
+  document.getElementById('assignSelectedCount').textContent = `${assignState.taggedIds.size} total assigned`;
+
+  const list = document.getElementById('assignQList');
+  if (!assignState.allQ.length) {
+    list.innerHTML = `<div class="empty-state"><div class="icon">❓</div><h3>No questions in this module</h3><p>Add questions to the MCQ Bank first, then assign them here.</p><button class="btn btn-accent" style="margin-top:12px" onclick="closeModal('modalAssignQ');openAddQ()">+ Add Questions to Bank</button></div>`;
+    return;
+  }
+  if (!assignState.filtered.length) {
+    list.innerHTML = `<div style="text-align:center;padding:40px;color:var(--text3)">No questions match your filters</div>`;
+    return;
+  }
+
+  list.innerHTML = assignState.filtered.map((q, i) => {
+    const opts = typeof q.opts === 'string' ? JSON.parse(q.opts||'[]') : (q.opts||[]);
+    const checked = assignState.taggedIds.has(q.id);
+    const diffColor = q.diff==='easy'?'green':q.diff==='hard'?'red':'yellow';
+    return `
+    <div class="assign-q-row ${checked?'assign-q-checked':''}" id="aqrow_${q.id}" onclick="toggleAssignQ('${q.id}',this)">
+      <div class="assign-q-check">
+        <div class="assign-checkbox ${checked?'checked':''}" id="aqchk_${q.id}">
+          ${checked ? '✓' : ''}
+        </div>
+      </div>
+      <div class="assign-q-body">
+        <div class="assign-q-meta">
+          <span class="badge badge-gray" style="font-size:10px">${q.topic||'General'}</span>
+          <span class="badge badge-${diffColor}" style="font-size:10px">${q.diff||'easy'}</span>
+          <span style="font-size:10px;color:var(--text3);margin-left:4px">#${i+1}</span>
+        </div>
+        <div class="assign-q-text">${escHtml(q.q)}</div>
+        <div class="assign-q-opts">
+          ${opts.map((o,oi) => `<span class="assign-opt ${oi===q.ans?'assign-opt-correct':''}">${String.fromCharCode(65+oi)}. ${escHtml(o)}</span>`).join('')}
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function toggleAssignQ(id, rowEl) {
+  if (assignState.taggedIds.has(id)) {
+    assignState.taggedIds.delete(id);
+    rowEl.classList.remove('assign-q-checked');
+    const chk = document.getElementById('aqchk_'+id);
+    if(chk){chk.classList.remove('checked');chk.textContent='';}
+  } else {
+    assignState.taggedIds.add(id);
+    rowEl.classList.add('assign-q-checked');
+    const chk = document.getElementById('aqchk_'+id);
+    if(chk){chk.classList.add('checked');chk.textContent='✓';}
+  }
+  document.getElementById('assignSelectedCount').textContent = `${assignState.taggedIds.size} total assigned`;
+  document.getElementById('assignCurrentCount').textContent = `${assignState.taggedIds.size} questions`;
+}
+
+async function selectAllAssignQ() {
+  assignState.filtered.forEach(q => {
+    assignState.taggedIds.add(q.id);
+    const row = document.getElementById('aqrow_'+q.id);
+    const chk = document.getElementById('aqchk_'+q.id);
+    if(row) row.classList.add('assign-q-checked');
+    if(chk){chk.classList.add('checked');chk.textContent='✓';}
+  });
+  document.getElementById('assignSelectedCount').textContent = `${assignState.taggedIds.size} total assigned`;
+  document.getElementById('assignCurrentCount').textContent = `${assignState.taggedIds.size} questions`;
+}
+
+function clearAllAssignQ() {
+  assignState.filtered.forEach(q => {
+    assignState.taggedIds.delete(q.id);
+    const row = document.getElementById('aqrow_'+q.id);
+    const chk = document.getElementById('aqchk_'+q.id);
+    if(row) row.classList.remove('assign-q-checked');
+    if(chk){chk.classList.remove('checked');chk.textContent='';}
+  });
+  document.getElementById('assignSelectedCount').textContent = `${assignState.taggedIds.size} total assigned`;
+  document.getElementById('assignCurrentCount').textContent = `${assignState.taggedIds.size} questions`;
+}
+
+async function saveAssignQ() {
+  const setId = assignState.setId;
+  const btn = document.querySelector('#modalAssignQ .btn-accent');
+  btn.textContent = '⏳ Saving...';
+  btn.disabled = true;
+
+  try {
+    // Get all questions for this module
+    const allIds = assignState.allQ.map(q => q.id);
+
+    // For questions that SHOULD be tagged → set setTag = setId
+    // For questions that SHOULD NOT be tagged (were tagged, now deselected) → set setTag = null
+    const toTag   = allIds.filter(id =>  assignState.taggedIds.has(id));
+    const toUntag = allIds.filter(id => !assignState.taggedIds.has(id));
+
+    const ops = [];
+    if (toTag.length)   ops.push(SB.from('mcq_bank').update({ setTag: setId }).in('id', toTag));
+    if (toUntag.length) ops.push(SB.from('mcq_bank').update({ setTag: null  }).in('id', toUntag));
+    await Promise.all(ops);
+
+    // Update qCount on the set
+    await SB.from('sets').update({ qCount: toTag.length }).eq('id', setId);
+
+    toast(`✅ ${toTag.length} questions assigned to "${assignState.setName}"`, 'success');
+    closeModal('modalAssignQ');
+    await loadSetsCache();
+    filterSets();
+  } catch(e) {
+    toast('Error saving: ' + e.message, 'error');
+  } finally {
+    btn.textContent = '💾 Save Assignments';
+    btn.disabled = false;
+  }
+}
+
+async function removeAllFromSet() {
+  showConfirm(`Remove ALL questions from set "${assignState.setName}"? Questions will stay in the bank.`,
+    async () => {
+      assignState.taggedIds.clear();
+      await saveAssignQ();
+    }, 'Remove All', 'Clear Set', '⚠️', 'btn-danger');
+}
+
+// ════════════════════════════════════════════════════════════════
+// ADMIN: QUESTIONS
+// ════════════════════════════════════════════════════════════════
+async function renderAdminQuestions() {
+  const el = document.getElementById('adminContent');
+  el.innerHTML = `
+    <div class="section-header">
+      <div><h2>MCQ Bank</h2><p>Manage all questions</p></div>
+      <div class="hd-right">
+        <button class="btn btn-outline btn-sm" onclick="exportQuestions()">📥 Export CSV</button>
+        <button class="btn btn-accent" onclick="openAddQ()">+ Add Question</button>
+      </div>
+    </div>
+    <div class="filter-bar">
+      <input type="text" class="search-input" id="qSearch" placeholder="🔍 Search questions..." oninput="filterQuestions()">
+      <select class="filter-select" id="qModFilter" onchange="filterQuestions()">
+        <option value="">All Modules</option>
+        ${cache.modules.map(m=>`<option value="${m.id}">${m.icon} ${m.name}</option>`).join('')}
+      </select>
+      <select class="filter-select" id="qDiffFilter" onchange="filterQuestions()">
+        <option value="">All Difficulties</option>
+        <option value="easy">Easy</option>
+        <option value="medium">Medium</option>
+        <option value="hard">Hard</option>
+      </select>
+      <span id="qCount" style="font-size:12px;color:var(--text3)"></span>
+    </div>
+    <div class="card">
+      <div class="tbl-wrap" id="qTableWrap">
+        <div class="spinner"></div>
+      </div>
+    </div>
+  `;
+  await filterQuestions();
+}
+
+let allQuestions = [];
+async function filterQuestions() {
+  const q = (document.getElementById('qSearch')?.value||'').toLowerCase();
+  const modF = document.getElementById('qModFilter')?.value;
+  const diffF = document.getElementById('qDiffFilter')?.value;
+
+  let query = SB.from('mcq_bank').select('*').order('id', { ascending: false }).limit(200);
+  if (modF) query = query.eq('moduleId', parseInt(modF));
+  if (diffF) query = query.eq('diff', diffF);
+  const { data } = await query;
+  allQuestions = (data||[]).filter(q2 => !q || q2.q?.toLowerCase().includes(q) || q2.topic?.toLowerCase().includes(q));
+
+  document.getElementById('qCount').textContent = `${allQuestions.length} questions`;
+
+  const wrap = document.getElementById('qTableWrap');
+  if (!wrap) return;
+  wrap.innerHTML = `
+    <table>
+      <thead><tr>
+        <th>Module</th><th>Topic</th><th>Difficulty</th><th>Question</th><th>Correct Ans</th><th>Set</th><th>Actions</th>
+      </tr></thead>
+      <tbody>${allQuestions.map(q2 => {
+        const mod = cache.modules.find(m => m.id === parseInt(q2.moduleId));
+        const opts = typeof q2.opts === 'string' ? JSON.parse(q2.opts||'[]') : (q2.opts||[]);
+        const taggedSet = q2.setTag ? cache.sets.find(s => s.id === q2.setTag) : null;
+        return `
+        <tr>
+          <td>${mod ? mod.icon+' '+mod.name.split(' ')[0] : q2.moduleId}</td>
+          <td><span class="badge badge-gray">${q2.topic||'General'}</span></td>
+          <td><span class="badge badge-${q2.diff==='easy'?'green':q2.diff==='hard'?'red':'yellow'}">${q2.diff||'easy'}</span></td>
+          <td style="max-width:280px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${q2.q}</td>
+          <td style="max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--green)">${opts[(q2.ans||0)]||''}</td>
+          <td style="min-width:110px">
+            ${taggedSet
+              ? `<span class="badge badge-blue" style="font-size:10px;cursor:pointer" title="${taggedSet.name}" onclick="openAssignQ('${taggedSet.id}','${taggedSet.name.replace(/'/g,"\\'")}',${q2.moduleId})">📎 ${taggedSet.name.slice(0,12)}${taggedSet.name.length>12?'…':''}</span>`
+              : `<span style="font-size:11px;color:var(--text3)">—</span>`}
+          </td>
+          <td>
+            <div style="display:flex;gap:6px">
+              <button class="btn btn-outline btn-sm" onclick="editQuestion('${q2.id}')">✏️</button>
+              <button class="btn btn-danger btn-sm" onclick="deleteQuestion('${q2.id}')">🗑</button>
+            </div>
+          </td>
+        </tr>`;
+      }).join('')||'<tr><td colspan="7"><div class="empty-state"><div class="icon">❓</div><h3>No questions found</h3><p>Add questions to build your bank</p></div></td></tr>'}
+      </tbody>
+    </table>`;
+}
+
+async function openAddQ() {
+  document.getElementById('addQTitle').textContent = 'Add Question';
+  document.getElementById('qModule').innerHTML = `<option value="">Select Module</option>${cache.modules.map(m=>`<option value="${m.id}">${m.icon} ${m.name}</option>`).join('')}`;
+  document.getElementById('bulkQModule').innerHTML = `<option value="">Use CSV column</option>${cache.modules.map(m=>`<option value="${m.id}">${m.icon} ${m.name}</option>`).join('')}`;
+  ['qText','qOpt0','qOpt1','qOpt2','qOpt3','qExplain','qTopic'].forEach(id => document.getElementById(id).value='');
+  populateSetTagSelect();
+  switchQTab('single');
+  openModal('modalAddQ');
+}
+
+async function populateSetTagSelect() {
+  await loadSetsCache();
+  document.getElementById('qSetTag').innerHTML = `<option value="">No Set Tag</option>${cache.sets.map(s=>`<option value="${s.id}">${s.name}</option>`).join('')}`;
+}
+
+let qEditId = null;
+async function editQuestion(id) {
+  const { data: q } = await SB.from('mcq_bank').select('*').eq('id', id).single();
+  if (!q) return;
+  qEditId = id;
+  document.getElementById('addQTitle').textContent = 'Edit Question';
+  document.getElementById('qModule').innerHTML = `<option value="">Select Module</option>${cache.modules.map(m=>`<option value="${m.id}" ${m.id===parseInt(q.moduleId)?'selected':''}>${m.icon} ${m.name}</option>`).join('')}`;
+  const opts = typeof q.opts === 'string' ? JSON.parse(q.opts||'[]') : (q.opts||[]);
+  document.getElementById('qText').value = q.q||'';
+  document.getElementById('qOpt0').value = opts[0]||'';
+  document.getElementById('qOpt1').value = opts[1]||'';
+  document.getElementById('qOpt2').value = opts[2]||'';
+  document.getElementById('qOpt3').value = opts[3]||'';
+  document.getElementById('qAns').value = String(q.ans||0);
+  document.getElementById('qTopic').value = q.topic||'';
+  document.getElementById('qDiff').value = q.diff||'easy';
+  document.getElementById('qExplain').value = q.explain||'';
+  await populateSetTagSelect();
+  document.getElementById('qSetTag').value = q.setTag||'';
+  switchQTab('single');
+  openModal('modalAddQ');
+}
+
+async function saveQuestion() {
+  if (document.getElementById('tabBulkQ').classList.contains('active')) return saveBulkQuestions();
+
+  const moduleId = parseInt(document.getElementById('qModule').value);
+  const q = document.getElementById('qText').value.trim();
+  const opts = ['qOpt0','qOpt1','qOpt2','qOpt3'].map(id => document.getElementById(id).value.trim());
+  if (!moduleId || !q || opts.some(o=>!o)) return toast('Module, question and all options required', 'error');
+
+  const rec = {
+    id: qEditId || `Q_${Date.now()}_${Math.random().toString(36).slice(2,6)}`,
+    moduleId, q, opts,
+    ans: parseInt(document.getElementById('qAns').value)||0,
+    diff: document.getElementById('qDiff').value,
+    topic: document.getElementById('qTopic').value.trim()||'General',
+    explain: document.getElementById('qExplain').value.trim(),
+    setTag: document.getElementById('qSetTag').value||null
+  };
+
+  const { error } = qEditId
+    ? await SB.from('mcq_bank').update(rec).eq('id', qEditId)
+    : await SB.from('mcq_bank').insert(rec);
+  if (error) return toast('Error: ' + error.message, 'error');
+  toast(qEditId ? 'Question updated!' : 'Question added!', 'success');
+  qEditId = null;
+  closeModal('modalAddQ');
+  filterQuestions();
+}
+
+async function deleteQuestion(id) {
+  showConfirm('Delete this question?', async () => {
+    const { error } = await SB.from('mcq_bank').delete().eq('id', id);
+    if (error) return toast('Error: ' + error.message, 'error');
+    toast('Question deleted', 'success');
+    filterQuestions();
+  });
+}
+
+// Bulk Q import
+let bulkQRows = [];
+function handleQDrop(e) {
+  e.preventDefault();
+  document.getElementById('qDropZone').classList.remove('drag-over');
+  handleQFile({ target: { files: e.dataTransfer.files } });
+}
+
+function handleQFile(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    const lines = ev.target.result.replace(/\r/g,'').split('\n').filter(l=>l.trim());
+    bulkQRows = [];
+    const headers = lines[0].toLowerCase().split(',').map(h=>h.trim().replace(/[^a-z0-9]/g,''));
+    const startIdx = headers.includes('q') || headers.includes('question') ? 1 : 0;
+    const idx = (names) => { for(const n of names){ const i=headers.indexOf(n); if(i>=0)return i; } return -1; };
+    const mi = idx(['moduleid','module','mod']);
+    const ti = idx(['topic']);
+    const di = idx(['diff','difficulty']);
+    const qi = idx(['q','question','questiontext']);
+    const a = idx(['opta','a','opt1','option1','optiona']);
+    const b = idx(['optb','b','opt2','option2','optionb']);
+    const c = idx(['optc','c','opt3','option3','optionc']);
+    const d = idx(['optd','d','opt4','option4','optiond']);
+    const ai = idx(['ans','answer','correct','correctanswer']);
+    const ei = idx(['explain','explanation']);
+    const si = idx(['settag','set','setid']);
+
+    for (let i = startIdx; i < lines.length; i++) {
+      const cols = smartCsvParse(lines[i]);
+      const get = j => j>=0 ? (cols[j]||'').trim() : '';
+      const modId = document.getElementById('bulkQModule').value || get(mi);
+      const qText = get(qi);
+      if (!qText) continue;
+      const rawAns = parseInt(get(ai))||1;
+      bulkQRows.push({
+        id: `Q_${Date.now()}_${i}_${Math.random().toString(36).slice(2,5)}`,
+        moduleId: parseInt(modId)||0,
+        topic: get(ti)||'General',
+        diff: (['easy','medium','hard'].includes(get(di))?get(di):'easy'),
+        q: qText,
+        opts: [get(a),get(b),get(c),get(d)].filter(Boolean),
+        ans: Math.max(0, rawAns-1),
+        explain: get(ei)||'',
+        setTag: get(si)||null
+      });
+    }
+    const preview = document.getElementById('bulkQPreview');
+    preview.innerHTML = `
+      <div class="badge badge-green" style="margin-bottom:10px">✓ ${bulkQRows.length} questions parsed</div>
+      <div class="card" style="max-height:180px;overflow-y:auto">
+        <table><thead><tr><th>Module</th><th>Topic</th><th>Diff</th><th>Question (preview)</th></tr></thead>
+        <tbody>${bulkQRows.slice(0,10).map(q=>`<tr>
+          <td>${q.moduleId}</td><td>${q.topic}</td>
+          <td><span class="badge badge-${q.diff==='easy'?'green':q.diff==='hard'?'red':'yellow'}">${q.diff}</span></td>
+          <td style="max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${q.q}</td>
+        </tr>`).join('')}</tbody></table>
+      </div>
+      ${bulkQRows.length>10?`<p style="font-size:11px;color:var(--text3);margin-top:6px">...and ${bulkQRows.length-10} more</p>`:''}`;
+  };
+  reader.readAsText(file);
+}
+
+function smartCsvParse(line) {
+  const res = []; let cur = ''; let inQ = false;
+  for (const ch of line) {
+    if (ch === '"') { inQ = !inQ; continue; }
+    if (ch === ',' && !inQ) { res.push(cur); cur = ''; continue; }
+    cur += ch;
+  }
+  res.push(cur);
+  return res;
+}
+
+async function saveBulkQuestions() {
+  if (!bulkQRows.length) return toast('No questions to import', 'error');
+  const batchSize = 50;
+  let imported = 0;
+  for (let i = 0; i < bulkQRows.length; i += batchSize) {
+    const batch = bulkQRows.slice(i, i + batchSize);
+    const { error } = await SB.from('mcq_bank').upsert(batch, { onConflict: 'id' });
+    if (error) { toast('Batch error: ' + error.message, 'error'); break; }
+    imported += batch.length;
+  }
+  toast(`${imported} questions imported!`, 'success');
+  bulkQRows = [];
+  closeModal('modalAddQ');
+  filterQuestions();
+}
+
+async function exportQuestions() {
+  const rows = allQuestions.map(q => {
+    const opts = typeof q.opts === 'string' ? JSON.parse(q.opts||'[]') : (q.opts||[]);
+    return `${q.moduleId},"${q.topic||''}","${q.diff||'easy'}","${(q.q||'').replace(/"/g,'""')}","${(opts[0]||'').replace(/"/g,'""')}","${(opts[1]||'').replace(/"/g,'""')}","${(opts[2]||'').replace(/"/g,'""')}","${(opts[3]||'').replace(/"/g,'""')}",${(q.ans||0)+1},"${(q.explain||'').replace(/"/g,'""')}","${q.setTag||''}"`;
+  });
+  const csv = 'moduleId,topic,diff,q,optA,optB,optC,optD,ans,explain,setTag\n' + rows.join('\n');
+  downloadFile(csv, 'mcq_bank.csv', 'text/csv');
+}
+
+function switchQTab(tab) {
+  document.querySelectorAll('#modalAddQ .tab-btn').forEach((b,i) => b.classList.toggle('active', (i===0&&tab==='single')||(i===1&&tab==='bulk')));
+  document.getElementById('tabSingleQ').classList.toggle('active', tab==='single');
+  document.getElementById('tabBulkQ').classList.toggle('active', tab==='bulk');
+}
+
+// ════════════════════════════════════════════════════════════════
+// ADMIN: SCORES
+// ════════════════════════════════════════════════════════════════
+async function renderAdminScores() {
+  await loadScoresCache();
+  const el = document.getElementById('adminContent');
+  el.innerHTML = `
+    <div class="section-header">
+      <div><h2>Score Reports</h2><p>All student test attempts</p></div>
+      <div class="hd-right">
+        <button class="btn btn-outline btn-sm" onclick="exportScores()">📥 Export CSV</button>
+      </div>
+    </div>
+    <div class="filter-bar">
+      <input type="text" class="search-input" id="scoreSearch" placeholder="🔍 Search student..." oninput="filterScores()">
+      <select class="filter-select" id="scoreModFilter" onchange="filterScores()">
+        <option value="">All Modules</option>
+        ${cache.modules.map(m=>`<option value="${m.id}">${m.icon} ${m.name}</option>`).join('')}
+      </select>
+    </div>
+    <div class="card">
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr>
+            <th>Date</th><th>Student</th><th>Module</th><th>Set</th><th>Score</th><th>Correct</th><th>Wrong</th><th>Time</th><th>Result</th>
+          </tr></thead>
+          <tbody id="scoresTbody"></tbody>
+        </table>
+      </div>
+    </div>
+  `;
+  filterScores();
+}
+
+function filterScores() {
+  const q = (document.getElementById('scoreSearch')?.value||'').toLowerCase();
+  const modF = document.getElementById('scoreModFilter')?.value;
+  const filtered = cache.scores.filter(s =>
+    (!q || (s.studentName||'').toLowerCase().includes(q) || s.studentId.toLowerCase().includes(q)) &&
+    (!modF || String(s.moduleId) === String(modF))
+  );
+  const tbody = document.getElementById('scoresTbody');
+  if (!tbody) return;
+  tbody.innerHTML = filtered.map(s => `
+    <tr>
+      <td style="font-size:11px;color:var(--text3)">${new Date(s.date).toLocaleDateString('en-IN')}</td>
+      <td>
+        <div style="font-weight:600">${s.studentName||s.studentId}</div>
+        <div style="font-size:11px;color:var(--text3)">${s.studentId}</div>
+      </td>
+      <td>${s.moduleName}</td>
+      <td style="font-size:12px;color:var(--text2)">${s.setName}</td>
+      <td>
+        <div style="font-family:'JetBrains Mono',monospace;font-weight:700;font-size:16px;color:${s.pct>=60?'var(--green)':'var(--red)'}">${s.pct}%</div>
+      </td>
+      <td style="color:var(--green);font-weight:600">✓ ${s.correct||0}</td>
+      <td style="color:var(--red);font-weight:600">✗ ${s.wrong||0}</td>
+      <td style="color:var(--text2);font-size:12px">${formatTime(s.timeTaken)}</td>
+      <td><span class="badge ${s.pct>=60?'badge-green':'badge-red'}">${s.pct>=60?'Pass':'Fail'}</span></td>
+    </tr>`).join('') || '<tr><td colspan="9"><div class="empty-state"><div class="icon">🎯</div><h3>No scores yet</h3></div></td></tr>';
+}
+
+async function exportScores() {
+  const rows = cache.scores.map(s => `${s.date},${s.studentId},"${s.studentName}","${s.moduleName}","${s.setName}",${s.pct},${s.correct},${s.wrong},${s.total},${s.timeTaken}`);
+  downloadFile('date,studentId,studentName,module,set,pct,correct,wrong,total,timeTaken\n'+rows.join('\n'), 'scores.csv', 'text/csv');
+}
+
+// ════════════════════════════════════════════════════════════════
+// ADMIN: BADGES
+// ════════════════════════════════════════════════════════════════
+async function renderAdminBadges() {
+  const el = document.getElementById('adminContent');
+  el.innerHTML = `
+    <div class="section-header">
+      <div><h2>Achievement Badges</h2><p>All available badges and earned status</p></div>
+    </div>
+    <div class="achievements-grid">
+      ${ACHIEVEMENTS.map(a => `
+        <div class="achievement-card earned">
+          <div class="achievement-icon">${a.icon}</div>
+          <div class="achievement-name">${a.name}</div>
+          <div class="achievement-desc">${a.desc}</div>
+        </div>`).join('')}
+    </div>
+    <div style="margin-top:24px">
+      <div class="card">
+        <div class="card-inner">
+          <div class="chart-title">🏅 Top Badge Earners</div>
+          <div id="badgeEarnersTable"><div class="spinner"></div></div>
+        </div>
+      </div>
+    </div>
+  `;
+  await loadBadgeEarners();
+}
+
+async function loadBadgeEarners() {
+  await loadScoresCache();
+  const studentBadges = {};
+  const students = [...new Set(cache.scores.map(s=>s.studentId))];
+  for (const sid of students) {
+    const ss = computeStudentStats(sid);
+    studentBadges[sid] = { name: cache.scores.find(s=>s.studentId===sid)?.studentName||sid, earned: ACHIEVEMENTS.filter(a => a.check(ss)).length };
+  }
+  const sorted = Object.entries(studentBadges).sort((a,b) => b[1].earned - a[1].earned).slice(0,10);
+  document.getElementById('badgeEarnersTable').innerHTML = sorted.length ? `
+    <table><thead><tr><th>Student</th><th>Badges Earned</th><th>Progress</th></tr></thead>
+    <tbody>${sorted.map(([id,data]) => `
+      <tr>
+        <td><div style="font-weight:600">${data.name}</div><div style="font-size:11px;color:var(--text3)">${id}</div></td>
+        <td><span class="badge badge-yellow">🏅 ${data.earned}/${ACHIEVEMENTS.length}</span></td>
+        <td>
+          <div style="display:flex;gap:3px;flex-wrap:wrap">
+            ${ACHIEVEMENTS.map(a => `<span title="${a.name}" style="font-size:16px">${a.icon}</span>`).join('')}
+          </div>
+        </td>
+      </tr>`).join('')}</tbody></table>` : '<div class="empty-state"><p>No badges earned yet</p></div>';
+}
+
+// ════════════════════════════════════════════════════════════════
+// ADMIN: ANALYTICS
+// ════════════════════════════════════════════════════════════════
+async function renderAdminAnalytics() {
+  await loadScoresCache();
+  const el = document.getElementById('adminContent');
+  el.innerHTML = `
+    <div class="section-header">
+      <div><h2>Analytics</h2><p>Platform performance insights</p></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:20px">
+      <div class="chart-wrap">
+        <div class="chart-title">📊 Score Distribution</div>
+        <canvas id="scoreDistChart" height="220"></canvas>
+      </div>
+      <div class="chart-wrap">
+        <div class="chart-title">📚 Module Popularity</div>
+        <canvas id="modPopChart" height="220"></canvas>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+      <div class="chart-wrap">
+        <div class="chart-title">📈 Daily Test Activity</div>
+        <canvas id="dailyActChart" height="220"></canvas>
+      </div>
+      <div class="chart-wrap">
+        <div class="chart-title">🎯 Pass vs Fail Rate</div>
+        <canvas id="passFailChart" height="220"></canvas>
+      </div>
+    </div>
+  `;
+  setTimeout(() => {
+    // Score distribution
+    const buckets = [0,0,0,0,0,0,0,0,0,0];
+    cache.scores.forEach(s => { const b = Math.min(9, Math.floor((s.pct||0)/10)); buckets[b]++; });
+    new Chart(document.getElementById('scoreDistChart'), {
+      type:'bar',
+      data:{ labels:['0-9%','10-19%','20-29%','30-39%','40-49%','50-59%','60-69%','70-79%','80-89%','90-100%'],
+        datasets:[{label:'Students',data:buckets,backgroundColor:buckets.map((_,i)=>i>=6?'rgba(34,197,94,0.7)':'rgba(239,68,68,0.7)'),borderRadius:6}]},
+      options:{responsive:true,plugins:{legend:{display:false}},scales:{y:{grid:{color:'rgba(255,255,255,0.05)'},ticks:{color:'#6b75a0'}},x:{grid:{display:false},ticks:{color:'#6b75a0'}}}}
+    });
+
+    // Module popularity
+    const modCounts = {};
+    cache.scores.forEach(s => { modCounts[s.moduleName]=(modCounts[s.moduleName]||0)+1; });
+    const mods = Object.entries(modCounts).sort((a,b)=>b[1]-a[1]).slice(0,8);
+    new Chart(document.getElementById('modPopChart'), {
+      type:'doughnut',
+      data:{ labels:mods.map(m=>m[0]),
+        datasets:[{data:mods.map(m=>m[1]),backgroundColor:MODULE_COLORS.map(c=>c[0]+'cc'),borderWidth:0}]},
+      options:{responsive:true,plugins:{legend:{labels:{color:'#9ba3c7',font:{size:11}}}}}
+    });
+
+    // Daily activity
+    const daily = {};
+    cache.scores.forEach(s => {
+      const d = new Date(s.date).toLocaleDateString('en-IN',{month:'short',day:'numeric'});
+      daily[d]=(daily[d]||0)+1;
+    });
+    const days = Object.entries(daily).slice(-14);
+    new Chart(document.getElementById('dailyActChart'), {
+      type:'line',
+      data:{ labels:days.map(d=>d[0]),
+        datasets:[{label:'Tests',data:days.map(d=>d[1]),borderColor:'#a855f7',fill:true,backgroundColor:'rgba(168,85,247,0.1)',tension:0.4,pointBackgroundColor:'#a855f7',pointRadius:3}]},
+      options:{responsive:true,plugins:{legend:{display:false}},scales:{y:{grid:{color:'rgba(255,255,255,0.05)'},ticks:{color:'#6b75a0'}},x:{grid:{display:false},ticks:{color:'#6b75a0'}}}}
+    });
+
+    // Pass/Fail
+    const pass = cache.scores.filter(s=>s.pct>=60).length;
+    const fail = cache.scores.length - pass;
+    new Chart(document.getElementById('passFailChart'), {
+      type:'doughnut',
+      data:{ labels:['Pass','Fail'],
+        datasets:[{data:[pass,fail],backgroundColor:['rgba(34,197,94,0.8)','rgba(239,68,68,0.8)'],borderWidth:0}]},
+      options:{responsive:true,plugins:{legend:{labels:{color:'#9ba3c7'}}}}
+    });
+  }, 100);
+}
+
+// ════════════════════════════════════════════════════════════════
+// ADMIN: LEADERBOARD
+// ════════════════════════════════════════════════════════════════
+async function renderAdminLeaderboard() {
+  // Admin always loads full scores
+  const { data } = await SB.from('scores').select('*').order('date', { ascending: false });
+  cache.scores = data || [];
+  renderLeaderboard('adminContent', true);
+}
+
+function renderLeaderboard(containerId, isAdmin=false) {
+  const studentMap = {};
+  cache.scores.forEach(s => {
+    const sid = s.studentId;
+    if (!studentMap[sid]) studentMap[sid] = { name:s.studentName||sid, id:sid, tests:0, totalPct:0, totalTime:0 };
+    studentMap[sid].tests++;
+    studentMap[sid].totalPct += s.pct||0;
+    studentMap[sid].totalTime += s.timeTaken||0;
+  });
+  const lb = Object.values(studentMap)
+    .map(s => ({ ...s, avg: Math.round(s.totalPct/s.tests) }))
+    .sort((a,b) => b.avg - a.avg || b.tests - a.tests);
+
+  const colors = ['linear-gradient(135deg,#f59e0b,#fcd34d)','linear-gradient(135deg,#94a3b8,#cbd5e1)','linear-gradient(135deg,#b45309,#d97706)'];
+  const container = document.getElementById(containerId);
+
+  const lb_html = `
+    <div class="section-header">
+      <div><h2>🏆 Leaderboard</h2><p>Top performing students</p></div>
+    </div>
+    ${lb.slice(0,3).length >= 1 ? `
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:24px">
+      ${[lb[1]||null, lb[0]||null, lb[2]||null].map((s,i) => s ? `
+        <div class="card" style="text-align:center;padding:24px;${i===1?'border-color:rgba(245,158,11,0.4);background:rgba(245,158,11,0.05)':''}">
+          <div style="font-size:${i===1?'40px':'32px'};margin-bottom:8px">${['🥈','🥇','🥉'][i]}</div>
+          <div class="nav-avatar" style="width:48px;height:48px;font-size:18px;margin:0 auto 10px;background:${colors[i==='gold'?0:i==='silver'?1:2]}">${(s.name[0]||'?').toUpperCase()}</div>
+          <div style="font-weight:700;font-size:15px">${s.name}</div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:22px;font-weight:700;color:${i===1?'var(--yellow)':'var(--text)'};margin:6px 0">${s.avg}%</div>
+          <div style="font-size:12px;color:var(--text2)">${s.tests} tests</div>
+        </div>` : '<div></div>').join('')}
+    </div>` : ''}
+    <div class="card">
+      ${lb.map((s,i) => `
+        <div class="lb-row">
+          <div class="lb-rank ${i===0?'gold':i===1?'silver':i===2?'bronze':'normal'}">${i+1}</div>
+          <div class="lb-avatar" style="background:${MODULE_COLORS[i%MODULE_COLORS.length][0]+'33'};color:${MODULE_COLORS[i%MODULE_COLORS.length][0]}">${(s.name[0]||'?').toUpperCase()}</div>
+          <div class="lb-name">
+            <div>${s.name}</div>
+            <div style="font-size:11px;color:var(--text3)">${s.id} · ${s.tests} test${s.tests!==1?'s':''}</div>
+          </div>
+          ${currentUser?.id===s.id ? '<span class="badge badge-blue">You</span>' : ''}
+          <div>
+            <div class="lb-score">${s.avg}%</div>
+            <div class="lb-pct">avg score</div>
+          </div>
+        </div>`).join('') || '<div class="empty-state"><div class="icon">🏆</div><h3>No attempts yet</h3></div>'}
+    </div>`;
+
+  container.innerHTML = lb_html;
+}
+
+// ════════════════════════════════════════════════════════════════
+// ADMIN: SETTINGS
+// ════════════════════════════════════════════════════════════════
+async function renderAdminSettings() {
+  const { data } = await SB.from('config').select('*');
+  const cfg = {};
+  (data||[]).forEach(c => cfg[c.key]=c.value);
+
+  const el = document.getElementById('adminContent');
+  el.innerHTML = `
+    <div class="section-header">
+      <div><h2>Settings</h2><p>Platform configuration</p></div>
+    </div>
+    <div style="max-width:560px">
+      <div class="card">
+        <div class="card-inner">
+          <div class="chart-title" style="margin-bottom:20px">🔒 Admin Credentials</div>
+          <div class="fgroup">
+            <label>Admin Password</label>
+            <input type="text" id="cfgAdminPass" value="${cfg.adminPass||'admin'}">
+          </div>
+          <div class="chart-title" style="margin-bottom:16px;margin-top:24px">⚙️ Default Test Settings</div>
+          <div class="frow">
+            <div class="fgroup">
+              <label>Default Timer (minutes)</label>
+              <input type="number" id="cfgTimer" value="${cfg.timer||45}">
+            </div>
+            <div class="fgroup">
+              <label>Default Q Count</label>
+              <input type="number" id="cfgQCount" value="${cfg.qCount||50}">
+            </div>
+          </div>
+          <div class="fgroup">
+            <label>Pass Mark (%)</label>
+            <input type="number" id="cfgPassmark" value="${cfg.passmark||60}" min="1" max="100">
+          </div>
+          <button class="btn btn-accent" onclick="saveSettings()">💾 Save Settings</button>
+        </div>
+      </div>
+      <div class="card" style="margin-top:16px">
+        <div class="card-inner">
+          <div class="chart-title" style="margin-bottom:16px">🔗 Supabase Connection</div>
+          <div class="fgroup">
+            <label>Project URL</label>
+            <input type="text" value="https://cdefohsbowuuafbohiyc.supabase.co" readonly style="opacity:0.6;font-family:'JetBrains Mono',monospace;font-size:12px">
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;margin-top:4px">
+            <span style="width:8px;height:8px;border-radius:50%;background:var(--green);display:inline-block"></span>
+            <span style="font-size:13px;color:var(--green)">Connected — C-DAC Kharghar PGCP-BDA</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+async function saveSettings() {
+  const updates = [
+    { key:'adminPass', value: document.getElementById('cfgAdminPass').value.trim() },
+    { key:'timer', value: document.getElementById('cfgTimer').value },
+    { key:'qCount', value: document.getElementById('cfgQCount').value },
+    { key:'passmark', value: document.getElementById('cfgPassmark').value },
+  ];
+  for (const u of updates) {
+    await SB.from('config').upsert(u, { onConflict: 'key' });
+  }
+  toast('Settings saved!', 'success');
+}
+
+// ════════════════════════════════════════════════════════════════
+// STUDENT NAVIGATION
+// ════════════════════════════════════════════════════════════════
+async function studentNav(section) {
+  studentSection = section;
+  // Highlight active nav btn
+  document.querySelectorAll('.student-nav-btn').forEach(b => b.classList.toggle('active', b.dataset.section === section));
+  const content = document.getElementById('studentContent');
+  content.innerHTML = '<div class="spinner"></div>';
+  const map = {
+    modules: renderStudentModules,
+
+    history: renderStudentHistory,
+    badges: renderStudentBadges,
+    leaderboard: renderStudentLeaderboard,
+    analytics: renderStudentAnalytics
+  };
+  try {
+    await (map[section] || renderStudentModules)();
+  } catch(e) {
+    console.error('studentNav error:', e);
+    content.innerHTML = `<div class="empty-state"><div class="icon">⚠️</div><h3>Loading Error</h3><p style="color:var(--red)">${e.message || 'Something went wrong. Please try again.'}</p><button class="btn btn-accent" onclick="studentNav('${section}')">🔄 Retry</button></div>`;
+  }
+}
+
+// ════════════════════════════════════════════════════════════════
+// STUDENT: MODULES (Dashboard home)
+// ════════════════════════════════════════════════════════════════
+async function renderStudentModules() {
+  await loadScoresCache();
+  const myScores = cache.scores.filter(s => s.studentId === currentUser.id);
+  const stats = computeStudentStats(currentUser.id);
+  const badges = ACHIEVEMENTS.filter(a => a.check(stats));
+  const avgPct = myScores.length ? Math.round(myScores.reduce((a,b)=>a+(b.pct||0),0)/myScores.length) : 0;
+  const bestPct = myScores.length ? Math.max(...myScores.map(s=>s.pct||0)) : 0;
+  const passCount = myScores.filter(s=>s.pct>=60).length;
+  const recentScores = myScores.slice(0,5);
+
+  // Compute sets available per module
+  await loadSetsCache();
+  const publishedSets = cache.sets.filter(s => s.status === 'published' || s.active === true || s.active === 'true');
+
+  const el = document.getElementById('studentContent');
+  el.innerHTML = `
+    <!-- Welcome Banner -->
+    <div style="background:linear-gradient(135deg,rgba(79,142,247,0.15),rgba(168,85,247,0.1));border:1px solid rgba(79,142,247,0.2);border-radius:var(--r);padding:24px 28px;margin-bottom:24px;position:relative;overflow:hidden">
+      <div style="position:absolute;top:-30px;right:-30px;width:120px;height:120px;background:radial-gradient(circle,rgba(79,142,247,0.3),transparent 70%);border-radius:50%"></div>
+      <div style="display:flex;align-items:center;gap:16px">
+        <div class="nav-avatar" style="width:52px;height:52px;font-size:20px;flex-shrink:0">${currentUser.name[0].toUpperCase()}</div>
+        <div>
+          <h2 style="font-family:'Syne',sans-serif;font-size:22px;font-weight:800;margin-bottom:2px">Welcome back, ${currentUser.name.split(' ')[0]}! 👋</h2>
+          <p style="color:var(--text2);font-size:13px">PGCP-BDA · C-DAC Kharghar &nbsp;|&nbsp; <span style="color:var(--accent)">${currentUser.id}</span></p>
+          <p style="color:var(--text3);font-size:12px;margin-top:4px">VNS Labs · Practice Smart. Score Higher. Succeed.</p>
+        </div>
+        <div style="margin-left:auto;text-align:right;flex-shrink:0">
+          ${myScores.length ? `<div style="font-family:'JetBrains Mono',monospace;font-size:32px;font-weight:700;color:${avgPct>=60?'var(--green)':'var(--yellow)'}">${avgPct}%</div><div style="font-size:12px;color:var(--text2)">average score</div>` : `<div style="font-size:13px;color:var(--text3)">No tests yet</div><div style="font-size:12px;color:var(--text3)">Start practicing!</div>`}
+        </div>
+      </div>
+    </div>
+
+    <!-- Stats Row -->
+    <div class="stat-grid" style="margin-bottom:24px">
+      <div class="stat-card blue">
+        <div class="stat-icon">🎯</div>
+        <div class="stat-label">Tests Taken</div>
+        <div class="stat-val">${myScores.length}</div>
+        <div class="stat-sub">${passCount} passed (${myScores.length?Math.round(passCount/myScores.length*100):0}%)</div>
+      </div>
+      <div class="stat-card green">
+        <div class="stat-icon">📊</div>
+        <div class="stat-label">Avg Score</div>
+        <div class="stat-val">${avgPct}%</div>
+        <div class="stat-sub">${myScores.length ? `across ${myScores.length} test${myScores.length!==1?'s':''}` : 'No tests yet'}</div>
+      </div>
+      <div class="stat-card yellow">
+        <div class="stat-icon">🏆</div>
+        <div class="stat-label">Best Score</div>
+        <div class="stat-val">${bestPct}%</div>
+        <div class="stat-sub">${myScores.length ? 'personal best' : 'Start a test!'}</div>
+      </div>
+      <div class="stat-card purple">
+        <div class="stat-icon">🏅</div>
+        <div class="stat-label">Badges</div>
+        <div class="stat-val">${badges.length}</div>
+        <div class="stat-sub">of ${ACHIEVEMENTS.length} earned</div>
+      </div>
+      <div class="stat-card cyan">
+        <div class="stat-icon">📚</div>
+        <div class="stat-label">Sets Available</div>
+        <div class="stat-val">${publishedSets.length}</div>
+        <div class="stat-sub">across ${cache.modules.length} modules</div>
+      </div>
+      <div class="stat-card orange" style="cursor:pointer" onclick="studentNav('leaderboard')" title="View Leaderboard">
+        <div class="stat-icon">🏆</div>
+        <div class="stat-label">Class Rank</div>
+        <div class="stat-val">${stats.rank < 999 ? '#'+stats.rank : '—'}</div>
+        <div class="stat-sub">${stats.activeDays} day${stats.activeDays!==1?'s':''} active · <span style="color:var(--accent)">View →</span></div>
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 300px;gap:20px;margin-bottom:24px">
+      <!-- Recent Activity -->
+      <div class="card">
+        <div class="card-inner">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+            <div class="chart-title" style="margin:0">🕐 Recent Tests</div>
+            ${recentScores.length ? `<button class="btn btn-outline btn-sm" onclick="studentNav('history')">View All →</button>` : ''}
+          </div>
+          ${recentScores.length ? recentScores.map(s => `
+            <div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border)">
+              <div style="width:40px;height:40px;border-radius:var(--r2);background:${s.pct>=60?'rgba(34,197,94,0.15)':'rgba(239,68,68,0.15)'};display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">${s.pct>=60?'✅':'❌'}</div>
+              <div style="flex:1;min-width:0">
+                <div style="font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${s.setName||s.setId}</div>
+                <div style="font-size:11px;color:var(--text2)">${s.moduleName} · ${new Date(s.date).toLocaleDateString('en-IN')}</div>
+              </div>
+              <div style="text-align:right;flex-shrink:0">
+                <div style="font-family:'JetBrains Mono',monospace;font-weight:700;color:${s.pct>=60?'var(--green)':'var(--red)'};font-size:15px">${s.pct}%</div>
+                <div style="font-size:10px;color:var(--text3)">${s.correct}✓ ${s.wrong}✗</div>
+              </div>
+            </div>`).join('') : `
+            <div class="empty-state" style="padding:30px 0">
+              <div class="icon">📋</div>
+              <h3>No tests yet</h3>
+              <p>Pick a module below and start practicing!</p>
+            </div>`}
+        </div>
+      </div>
+
+      <!-- Quick Badges -->
+      <div class="card">
+        <div class="card-inner">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+            <div class="chart-title" style="margin:0">🏅 My Badges</div>
+            <button class="btn btn-outline btn-sm" onclick="studentNav('badges')">All →</button>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px">
+            ${ACHIEVEMENTS.map(a => {
+              const earned = a.check(stats);
+              return `<div title="${a.name}: ${a.desc}" style="text-align:center;padding:8px 4px;border-radius:8px;background:${earned?'rgba(245,158,11,0.1)':'var(--bg2)'};border:1px solid ${earned?'rgba(245,158,11,0.3)':'var(--border)'};cursor:pointer;transition:all 0.2s" onclick="studentNav('badges')">
+                <div style="font-size:20px;${earned?'':'filter:grayscale(1);opacity:0.3'}">${a.icon}</div>
+              </div>`;
+            }).join('')}
+          </div>
+          <div style="margin-top:12px;text-align:center">
+            <span class="badge badge-yellow">${badges.length} / ${ACHIEVEMENTS.length} Earned</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modules Grid -->
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+      <h3 style="font-size:16px;font-weight:700">📚 Practice Modules</h3>
+      <span style="font-size:12px;color:var(--text3)">${cache.modules.length} modules · ${publishedSets.length} sets available</span>
+    </div>
+    <div class="module-grid">
+      ${cache.modules.map((m,i) => {
+        const [c1,c2] = MODULE_COLORS[i%MODULE_COLORS.length];
+        const mScores = myScores.filter(s => s.moduleId === m.id);
+        const avg = mScores.length ? Math.round(mScores.reduce((a,b)=>a+(b.pct||0),0)/mScores.length) : 0;
+        const topics = typeof m.topics === 'string' ? JSON.parse(m.topics||'[]') : (m.topics||[]);
+        const mSets = publishedSets.filter(s => parseInt(s.moduleId) === m.id);
+        const myRating = getModuleRating(m.id);
+        const { avgRating, ratingCount } = getModuleAvgRating(m.id);
+        return `
+        <div class="mod-card" style="--c1:${c1};--c2:${c2}" onclick="openModuleSets(${m.id})">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start">
+            <div class="mod-icon">${m.icon||'📚'}</div>
+            <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">
+              ${mScores.length ? `<span class="badge badge-${avg>=60?'green':'yellow'}">${avg}% avg</span>` : '<span class="badge badge-gray">Not started</span>'}
+              ${mSets.length ? `<span class="badge badge-blue">${mSets.length} set${mSets.length!==1?'s':''}</span>` : '<span class="badge badge-gray">No sets yet</span>'}
+            </div>
+          </div>
+          <div class="mod-name">${m.name}</div>
+          <div class="mod-desc">${m.desc||''}</div>
+          <div class="mod-meta">
+            <span class="badge badge-gray">${mScores.length} attempt${mScores.length!==1?'s':''}</span>
+            <span class="badge badge-purple">${topics.length} topics</span>
+          </div>
+          ${mScores.length ? `<div class="mod-progress"><div class="mod-progress-bar" style="width:${avg}%"></div></div>` : ''}
+          <div class="star-row" onclick="event.stopPropagation()">
+            <div class="star-group" id="stars_${m.id}">
+              ${[1,2,3,4,5].map(n => `<span class="star ${myRating>=n?'filled':''}" 
+                onmouseenter="previewStars(${m.id},${n})"
+                onmouseleave="resetStars(${m.id})"
+                onclick="rateModule(${m.id},${n})">⭐</span>`).join('')}
+            </div>
+            ${avgRating > 0 
+              ? `<span class="star-avg">${avgRating.toFixed(1)} <span class="star-count">(${ratingCount})</span></span>`
+              : `<span class="star-avg" style="font-style:italic">Rate this</span>`}
+          </div>
+        </div>`;
+      }).join('')}
+    </div>
+  `;
+}
+
+// ════════════════════════════════════════════════════════════════
+// STUDENT: SETS for a module
+// ════════════════════════════════════════════════════════════════
+async function openModuleSets(moduleId) {
+  await loadSetsCache();
+  await loadScoresCache();
+  const mod = cache.modules.find(m => m.id === moduleId);
+  // A set is visible if status=published OR active=true
+  const sets = cache.sets.filter(s => parseInt(s.moduleId) === moduleId && (s.status === 'published' || s.active === true || s.active === 'true'));
+  const myScores = cache.scores.filter(s => s.studentId === currentUser.id && s.moduleId === moduleId);
+  const topics = typeof mod?.topics === 'string' ? JSON.parse(mod?.topics||'[]') : (mod?.topics||[]);
+  const [c1,c2] = MODULE_COLORS[(moduleId||0) % MODULE_COLORS.length];
+
+  const el = document.getElementById('studentContent');
+  el.innerHTML = `
+    <div style="margin-bottom:20px">
+      <button class="btn btn-outline btn-sm" onclick="studentNav('modules')" style="margin-bottom:12px">← Back to Modules</button>
+      <div style="background:linear-gradient(135deg,${c1}22,${c2}11);border:1px solid ${c1}33;border-radius:var(--r);padding:20px 24px">
+        <div style="display:flex;align-items:center;gap:16px">
+          <div style="font-size:40px">${mod?.icon||'📚'}</div>
+          <div style="flex:1">
+            <h2 style="font-family:'Syne',sans-serif;font-size:20px;font-weight:800">${mod?.name}</h2>
+            <p style="color:var(--text2);font-size:13px;margin-top:2px">${mod?.desc||''}</p>
+            ${topics.length ? `<div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:10px">${topics.map(t=>`<span class="badge badge-gray">${t}</span>`).join('')}</div>` : ''}
+          </div>
+          <div style="text-align:right;flex-shrink:0">
+            <div style="font-size:13px;color:var(--text2)">${sets.length} set${sets.length!==1?'s':''} available</div>
+            <div style="font-size:13px;color:var(--text2)">${myScores.length} attempt${myScores.length!==1?'s':''}</div>
+            ${myScores.length ? `<div style="font-family:'JetBrains Mono',monospace;font-size:20px;font-weight:700;color:${Math.max(...myScores.map(s=>s.pct||0))>=60?'var(--green)':'var(--yellow)'};margin-top:4px">${Math.max(...myScores.map(s=>s.pct||0))}% best</div>` : ''}
+          </div>
+        </div>
+      </div>
+    </div>
+    ${sets.length === 0 ? `
+      <div class="empty-state">
+        <div class="icon">📝</div>
+        <h3>No sets published yet</h3>
+        <p>Your instructor hasn't published any practice sets for this module yet. Check back soon!</p>
+      </div>` :
+    `<div style="display:flex;flex-direction:column;gap:14px">
+      ${sets.map((s, idx) => {
+        const setScore = myScores.filter(sc => sc.setId === s.id);
+        const best = setScore.length ? Math.max(...setScore.map(sc=>sc.pct||0)) : null;
+        const lastAttempt = setScore[0];
+        const diffColor = s.diffMix==='easy'?'green':s.diffMix==='hard'?'red':s.diffMix==='medium'?'yellow':'blue';
+        return `
+        <div class="card" style="padding:20px;cursor:pointer;transition:all 0.2s" onclick="startTest(${moduleId},'${s.id}')"
+          onmouseover="this.style.borderColor='${c1}66';this.style.transform='translateY(-2px)'"
+          onmouseout="this.style.borderColor='';this.style.transform=''">
+          <div style="display:flex;align-items:center;gap:20px">
+            <div style="width:44px;height:44px;border-radius:10px;background:linear-gradient(135deg,${c1}33,${c2}22);display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;color:${c1};font-family:'JetBrains Mono',monospace;flex-shrink:0">${idx+1}</div>
+            <div style="flex:1">
+              <div style="font-weight:700;font-size:15px;margin-bottom:6px">${s.name}</div>
+              ${s.desc ? `<div style="font-size:12px;color:var(--text2);margin-bottom:10px">${s.desc}</div>` : ''}
+              <div style="display:flex;gap:8px;flex-wrap:wrap">
+                <span class="badge badge-blue">⏱ ${s.timer||45} min</span>
+                <span class="badge badge-gray">❓ ${s.qCount||50} Qs</span>
+                <span class="badge badge-${diffColor}">📊 ${s.diffMix||'mixed'}</span>
+                ${setScore.length ? `<span class="badge badge-gray">🔄 ${setScore.length} attempt${setScore.length!==1?'s':''}</span>` : ''}
+                ${lastAttempt ? `<span class="badge badge-${lastAttempt.pct>=60?'green':'red'}">Last: ${lastAttempt.pct}%</span>` : ''}
+              </div>
+            </div>
+            <div style="text-align:right;flex-shrink:0">
+              ${best !== null ?
+                `<div style="font-family:'JetBrains Mono',monospace;font-size:26px;font-weight:700;color:${best>=60?'var(--green)':'var(--red)'}">${best}%</div>
+                 <div style="font-size:11px;color:var(--text2)">best score</div>
+                 <div style="font-size:10px;color:${best>=60?'var(--green)':'var(--red)'}">● ${best>=60?'Passed':'Failed'}</div>` :
+                `<div style="font-size:13px;color:var(--text3);margin-bottom:4px">Not attempted</div>`}
+              <button class="btn btn-accent btn-sm" style="margin-top:8px">▶ Start Test</button>
+            </div>
+          </div>
+        </div>`;
+      }).join('')}
+    </div>`}
+  `;
+}
+
+// ════════════════════════════════════════════════════════════════
+// STUDENT: HISTORY
+// ════════════════════════════════════════════════════════════════
+async function renderStudentHistory() {
+  await loadScoresCache();
+  const myScores = cache.scores.filter(s => s.studentId === currentUser.id);
+  const passCount = myScores.filter(s=>s.pct>=60).length;
+  const avgPct = myScores.length ? Math.round(myScores.reduce((a,b)=>a+(b.pct||0),0)/myScores.length) : 0;
+  const el = document.getElementById('studentContent');
+  el.innerHTML = `
+    <div class="section-header">
+      <div><h2>📋 My Test History</h2><p>All ${myScores.length} test attempts</p></div>
+      ${myScores.length ? `<div class="hd-right">
+        <span class="badge badge-green">✓ ${passCount} Passed</span>
+        <span class="badge badge-red">✗ ${myScores.length - passCount} Failed</span>
+        <span class="badge badge-blue">Avg: ${avgPct}%</span>
+      </div>` : ''}
+    </div>
+    <div class="card">
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr>
+            <th>Date</th><th>Module</th><th>Set</th><th>Score</th><th>Correct/Wrong</th><th>Time</th><th>Difficulty</th><th>Result</th>
+          </tr></thead>
+          <tbody>
+            ${myScores.map(s => `
+              <tr>
+                <td style="font-size:11px;color:var(--text3);white-space:nowrap">${new Date(s.date).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'2-digit'})}</td>
+                <td style="font-size:13px">${s.moduleName||'—'}</td>
+                <td style="font-size:12px;color:var(--text2);max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${s.setName||s.setId||'—'}</td>
+                <td><span style="font-family:'JetBrains Mono',monospace;font-size:15px;font-weight:700;color:${s.pct>=60?'var(--green)':'var(--red)'}">${s.pct}%</span></td>
+                <td style="font-size:12px"><span style="color:var(--green)">✓ ${s.correct||0}</span> &nbsp;<span style="color:var(--red)">✗ ${s.wrong||0}</span> &nbsp;<span style="color:var(--text3)">— ${(s.total||0)-(s.correct||0)-(s.wrong||0)}</span></td>
+                <td style="font-size:12px;color:var(--text2);white-space:nowrap">${formatTime(s.timeTaken)}</td>
+                <td><span class="badge badge-${s.diff==='easy'?'green':s.diff==='hard'?'red':'yellow'}">${s.diff||'—'}</span></td>
+                <td><span class="badge ${s.pct>=60?'badge-green':'badge-red'}">${s.pct>=60?'✓ Pass':'✗ Fail'}</span></td>
+              </tr>`).join('') || '<tr><td colspan="8"><div class="empty-state"><div class="icon">📋</div><h3>No tests taken yet</h3><p>Start practicing to see your history here</p></div></td></tr>'}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  `;
+}
+
+// ════════════════════════════════════════════════════════════════
+// STUDENT: BADGES
+// ════════════════════════════════════════════════════════════════
+async function renderStudentBadges() {
+  await loadScoresCache();
+  const stats = computeStudentStats(currentUser.id);
+  const el = document.getElementById('studentContent');
+  el.innerHTML = `
+    <div class="section-header">
+      <div><h2>My Badges</h2><p>Your achievements and milestones</p></div>
+    </div>
+    <div style="margin-bottom:20px">
+      <div class="badge badge-yellow" style="font-size:14px;padding:6px 16px">
+        🏅 ${ACHIEVEMENTS.filter(a=>a.check(stats)).length} / ${ACHIEVEMENTS.length} Earned
+      </div>
+    </div>
+    <div class="achievements-grid">
+      ${ACHIEVEMENTS.map(a => {
+        const earned = a.check(stats);
+        return `
+        <div class="achievement-card ${earned?'earned':'locked'}" title="${earned?'Earned!':'Locked'}">
+          <div class="achievement-icon">${a.icon}</div>
+          <div class="achievement-name">${a.name}</div>
+          <div class="achievement-desc">${a.desc}</div>
+          ${earned ? '<div style="margin-top:8px"><span class="badge badge-yellow">✓ Earned</span></div>' : '<div style="margin-top:8px"><span class="badge badge-gray">🔒 Locked</span></div>'}
+        </div>`;
+      }).join('')}
+    </div>
+  `;
+}
+
+// ════════════════════════════════════════════════════════════════
+// STUDENT: LEADERBOARD
+// ════════════════════════════════════════════════════════════════
+async function renderStudentLeaderboard() {
+  const el = document.getElementById('studentContent');
+  el.innerHTML = '<div class="spinner"></div>';
+
+  // Fetch leaderboard data: only need studentId, studentName, pct, timeTaken, moduleId, date
+  // Use a separate query that fetches aggregated data for ALL students
+  let lbScores = [];
+  try {
+    const { data, error } = await SB.from('scores')
+      .select('studentId,studentName,pct,timeTaken,moduleId,date')
+      .order('date', { ascending: false })
+      .limit(2000);
+    if (!error && data) lbScores = data;
+  } catch(e) {
+    console.warn('Leaderboard fetch failed:', e);
+  }
+
+  // Also ensure current user's scores are included even if RLS limits above
+  const myScores = cache.scores.filter(s => s.studentId === currentUser.id);
+  myScores.forEach(ms => {
+    if (!lbScores.find(s => s.studentId === ms.studentId && s.date === ms.date)) {
+      lbScores.push(ms);
+    }
+  });
+
+  // Aggregate per student
+  const studentMap = {};
+  lbScores.forEach(s => {
+    const sid = s.studentId;
+    if (!studentMap[sid]) studentMap[sid] = { name: s.studentName||sid, id: sid, tests: 0, totalPct: 0, best: 0, modules: new Set() };
+    studentMap[sid].tests++;
+    studentMap[sid].totalPct += s.pct||0;
+    studentMap[sid].best = Math.max(studentMap[sid].best, s.pct||0);
+    if (s.moduleId) studentMap[sid].modules.add(s.moduleId);
+  });
+
+  const lb = Object.values(studentMap)
+    .map(s => ({ ...s, avg: Math.round(s.totalPct / s.tests), modulesCount: s.modules.size }))
+    .sort((a,b) => b.avg - a.avg || b.tests - a.tests);
+
+  const myRank = lb.findIndex(s => s.id === currentUser.id) + 1;
+  const myEntry = lb.find(s => s.id === currentUser.id);
+
+  const podiumColors = [
+    'linear-gradient(135deg,#94a3b8,#cbd5e1)',  // 2nd - silver
+    'linear-gradient(135deg,#f59e0b,#fcd34d)',  // 1st - gold
+    'linear-gradient(135deg,#b45309,#d97706)',  // 3rd - bronze
+  ];
+  const podiumOrder = [lb[1]||null, lb[0]||null, lb[2]||null];
+  const podiumEmojis = ['🥈','🥇','🥉'];
+  const podiumSizes = ['32px','42px','32px'];
+  const podiumHeights = ['100px','120px','100px'];
+
+  el.innerHTML = `
+    <div class="section-header">
+      <div>
+        <h2>🏆 Leaderboard</h2>
+        <p>${lb.length} student${lb.length!==1?'s':''} ranked · sorted by average score</p>
+      </div>
+      ${myRank ? `<div class="hd-right"><span class="badge badge-blue">Your Rank: #${myRank}</span><span class="badge badge-${myEntry?.avg>=60?'green':'yellow'}">${myEntry?.avg||0}% avg</span></div>` : ''}
+    </div>
+
+    ${lb.length === 0 ? `<div class="empty-state"><div class="icon">🏆</div><h3>No attempts yet</h3><p>Be the first to take a test!</p></div>` : `
+
+    <!-- Podium (top 3) -->
+    ${lb.length >= 1 ? `
+    <div style="display:flex;align-items:flex-end;justify-content:center;gap:12px;margin-bottom:28px;padding:24px 0">
+      ${podiumOrder.map((s, i) => s ? `
+        <div style="display:flex;flex-direction:column;align-items:center;gap:8px;flex:1;max-width:220px">
+          <div style="font-size:${podiumSizes[i]}">${podiumEmojis[i]}</div>
+          <div class="nav-avatar" style="width:52px;height:52px;font-size:20px;background:${podiumColors[i]};${s.id===currentUser.id?'box-shadow:0 0 0 3px var(--accent)':''}">${(s.name[0]||'?').toUpperCase()}</div>
+          <div style="font-weight:700;font-size:14px;text-align:center;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${escHtml(s.name)}</div>
+          ${s.id===currentUser.id?'<span class="badge badge-blue" style="font-size:10px">You</span>':''}
+          <div style="font-family:\'JetBrains Mono\',monospace;font-size:24px;font-weight:800;color:${i===1?'var(--yellow)':s.avg>=60?'var(--green)':'var(--text)'}">${s.avg}%</div>
+          <div style="font-size:11px;color:var(--text2)">${s.tests} test${s.tests!==1?'s':''}</div>
+          <div style="background:${i===1?'rgba(245,158,11,0.2)':'var(--bg3)'};border:1px solid ${i===1?'rgba(245,158,11,0.3)':'var(--border)'};border-radius:0 0 8px 8px;width:100%;height:${podiumHeights[i]};display:flex;align-items:center;justify-content:center">
+            <span style="font-size:20px;font-weight:800;color:${i===1?'var(--yellow)':'var(--text3)'}">#${[2,1,3][i]}</span>
+          </div>
+        </div>` : '<div style="flex:1;max-width:220px"></div>').join('')}
+    </div>` : ''}
+
+    <!-- Full rankings table -->
+    <div class="card">
+      <div style="padding:14px 20px;border-bottom:1px solid var(--border);display:flex;gap:8px;align-items:center">
+        <span style="font-size:13px;font-weight:700;color:var(--text2)">All Rankings</span>
+        <span class="badge badge-gray">${lb.length} students</span>
+      </div>
+      ${lb.map((s, i) => {
+        const isYou = s.id === currentUser.id;
+        const medal = i===0?'🥇':i===1?'🥈':i===2?'🥉':'';
+        return `
+        <div class="lb-row" style="${isYou?'background:rgba(79,142,247,0.08);border-left:3px solid var(--accent)':''}">
+          <div class="lb-rank ${i===0?'gold':i===1?'silver':i===2?'bronze':'normal'}" style="min-width:36px">${medal||i+1}</div>
+          <div class="lb-avatar" style="background:${MODULE_COLORS[i%MODULE_COLORS.length][0]+'33'};color:${MODULE_COLORS[i%MODULE_COLORS.length][0]};font-weight:700">${(s.name[0]||'?').toUpperCase()}</div>
+          <div class="lb-name" style="flex:1">
+            <div style="font-weight:${isYou?'700':'500'}">${escHtml(s.name)} ${isYou?'<span class="badge badge-blue" style="font-size:10px;margin-left:4px">You</span>':''}</div>
+            <div style="font-size:11px;color:var(--text3)">${s.id} · ${s.tests} test${s.tests!==1?'s':''} · ${s.modulesCount} module${s.modulesCount!==1?'s':''}</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:20px;flex-shrink:0">
+            <div style="text-align:center">
+              <div style="font-size:11px;color:var(--text3);margin-bottom:2px">Best</div>
+              <div style="font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600;color:${s.best>=60?'var(--green)':'var(--red)'}">${s.best}%</div>
+            </div>
+            <div style="text-align:right">
+              <div class="lb-score" style="color:${s.avg>=60?'var(--green)':s.avg>=40?'var(--yellow)':'var(--red)'}">${s.avg}%</div>
+              <div class="lb-pct">avg score</div>
+            </div>
+          </div>
+        </div>`;
+      }).join('')}
+    </div>`}
+  `;
+}
+
+// ════════════════════════════════════════════════════════════════
+// STUDENT ANALYTICS
+// ════════════════════════════════════════════════════════════════
+async function renderStudentAnalytics() {
+  await loadScoresCache();
+  const myScores = cache.scores.filter(s => s.studentId === currentUser.id);
+  const el = document.getElementById('studentContent');
+  el.innerHTML = `
+    <div class="section-header"><div><h2>My Analytics</h2><p>Personal performance insights</p></div></div>
+    ${myScores.length < 2 ? '<div class="empty-state"><div class="icon">📈</div><h3>Take more tests to see analytics</h3><p>Complete at least 2 tests to unlock charts</p></div>' : `
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+      <div class="chart-wrap">
+        <div class="chart-title">📈 Score Progress</div>
+        <canvas id="myProgressChart" height="200"></canvas>
+      </div>
+      <div class="chart-wrap">
+        <div class="chart-title">📚 Module Performance</div>
+        <canvas id="myModChart" height="200"></canvas>
+      </div>
+    </div>`}
+  `;
+  if (myScores.length >= 2) setTimeout(() => {
+    const last10 = myScores.slice(0,10).reverse();
+    new Chart(document.getElementById('myProgressChart'), {
+      type:'line',
+      data:{ labels: last10.map(s=>new Date(s.date).toLocaleDateString('en-IN',{month:'short',day:'numeric'})),
+        datasets:[{label:'Score %',data:last10.map(s=>s.pct),borderColor:'#22c55e',fill:true,backgroundColor:'rgba(34,197,94,0.1)',tension:0.4,pointBackgroundColor:'#22c55e',pointRadius:4}]},
+      options:{responsive:true,plugins:{legend:{display:false}},scales:{y:{min:0,max:100,grid:{color:'rgba(255,255,255,0.05)'},ticks:{color:'#6b75a0'}},x:{grid:{display:false},ticks:{color:'#6b75a0'}}}}
+    });
+    const modData = {};
+    myScores.forEach(s => { if(!modData[s.moduleName])modData[s.moduleName]={total:0,count:0}; modData[s.moduleName].total+=s.pct; modData[s.moduleName].count++; });
+    const mods = Object.entries(modData).map(([name,d]) => ({name,avg:Math.round(d.total/d.count)}));
+    new Chart(document.getElementById('myModChart'), {
+      type:'bar',
+      data:{ labels:mods.map(m=>m.name.split(' ')[0]),
+        datasets:[{label:'Avg %',data:mods.map(m=>m.avg),backgroundColor:mods.map(m=>m.avg>=60?'rgba(34,197,94,0.7)':'rgba(239,68,68,0.7)'),borderRadius:6}]},
+      options:{responsive:true,plugins:{legend:{display:false}},scales:{y:{min:0,max:100,grid:{color:'rgba(255,255,255,0.05)'},ticks:{color:'#6b75a0'}},x:{grid:{display:false},ticks:{color:'#6b75a0'}}}}
+    });
+  }, 100);
+}
+
+// ════════════════════════════════════════════════════════════════
+// TEST ENGINE
+// ════════════════════════════════════════════════════════════════
+async function startTest(moduleId, setId) {
+  const set = cache.sets.find(s => s.id === setId);
+  const mod = cache.modules.find(m => m.id === moduleId);
+  if (!set || !mod) return toast('Set not found', 'error');
+
+  let questions = [];
+
+  // Try linkedIds first (specific questions assigned to this set)
+  const linkedIds = (() => {
+    try {
+      const raw = set.linkedIds;
+      if (!raw) return null;
+      const parsed = typeof raw === 'string' ? JSON.parse(raw) : raw;
+      return Array.isArray(parsed) && parsed.length > 0 ? parsed : null;
+    } catch { return null; }
+  })();
+
+  if (linkedIds) {
+    // Fetch only the linked question IDs in batches of 100
+    const chunks = [];
+    for (let i = 0; i < linkedIds.length; i += 100) chunks.push(linkedIds.slice(i, i+100));
+    for (const chunk of chunks) {
+      const { data } = await SB.from('mcq_bank').select('*').in('id', chunk);
+      if (data) questions.push(...data);
+    }
+  }
+
+  // Fallback: load questions by module (and optional diffMix filter)
+  if (!questions.length) {
+    let query = SB.from('mcq_bank').select('*').eq('moduleId', moduleId);
+    if (set.diffMix && set.diffMix !== 'mixed' && set.diffMix !== 'adaptive') {
+      query = query.eq('diff', set.diffMix);
+    }
+    // Also try setTag match
+    const { data: taggedData } = await SB.from('mcq_bank').select('*').eq('moduleId', moduleId).eq('setTag', setId);
+    if (taggedData?.length) {
+      questions = taggedData;
+    } else {
+      const { data } = await query.limit(500);
+      questions = data || [];
+    }
+  }
+
+  if (!questions.length) return toast('No questions available for this set. Admin needs to add questions first.', 'error');
+
+  // Shuffle and pick
+  const shuffled = shuffle(questions);
+  const qCount = Math.min(set.qCount || 50, shuffled.length);
+  const selectedQs = shuffled.slice(0, qCount);
+
+  // Shuffle options for each question
+  const processedQs = selectedQs.map(q => {
+    const opts = typeof q.opts === 'string' ? JSON.parse(q.opts||'[]') : (q.opts||[]);
+    const ansText = opts[q.ans] || opts[0];
+    const shuffledOpts = shuffle([...opts]);
+    return {
+      ...q,
+      opts: shuffledOpts,
+      originalAns: q.ans,
+      ans: shuffledOpts.indexOf(ansText)
+    };
+  });
+
+  // Initialize test state
+  testState = {
+    questions: processedQs,
+    answers: new Array(processedQs.length).fill(null),
+    marked: new Array(processedQs.length).fill(false),
+    current: 0,
+    startTime: Date.now(),
+    timerSeconds: (set.timer || 45) * 60,
+    timerInterval: null,
+    set, module: mod,
+    submitted: false
+  };
+
+  showPage('testPage');
+  document.getElementById('testModuleName').textContent = mod.icon + ' ' + mod.name;
+  document.getElementById('testSetName').textContent = set.name;
+
+  renderTestQuestion();
+  startTimer();
+}
+
+function renderTestQuestion() {
+  const { questions, answers, marked, current } = testState;
+  const q = questions[current];
+  if (!q) return;
+
+  const opts = typeof q.opts === 'string' ? JSON.parse(q.opts||'[]') : (q.opts||[]);
+  const letters = ['A','B','C','D'];
+
+  document.getElementById('testQNum').textContent = `Q ${current+1} / ${questions.length}`;
+  document.getElementById('testProgressFill').style.width = `${((current+1)/questions.length*100).toFixed(1)}%`;
+
+  document.getElementById('testContent').innerHTML = `
+    <div class="q-card">
+      <div class="q-header">
+        <div class="q-num-badge">${current+1}</div>
+        <div>
+          <div class="q-meta">
+            <span class="badge badge-${q.diff==='easy'?'green':q.diff==='hard'?'red':'yellow'}">${q.diff||'easy'}</span>
+            <span class="badge badge-gray">${q.topic||'General'}</span>
+            ${marked[current]?'<span class="badge badge-yellow">🚩 Marked</span>':''}
+          </div>
+          <div class="q-text">${escHtml(q.q)}</div>
+        </div>
+      </div>
+      <div class="options-list">
+        ${opts.map((opt,i) => `
+          <div class="opt-item ${answers[current]===i?'selected':''}" onclick="selectAnswer(${i})">
+            <div class="opt-letter">${letters[i]||i+1}</div>
+            <div class="opt-text">${escHtml(opt)}</div>
+          </div>`).join('')}
+      </div>
+    </div>
+  `;
+
+  updateNavGrid();
+  updateProgressSummary();
+
+  // Nav buttons
+  document.getElementById('btnPrev').disabled = current === 0;
+  document.getElementById('btnNext').textContent = current === questions.length-1 ? 'Submit Test ✓' : 'Next →';
+  document.getElementById('btnNext').onclick = current === questions.length-1 ? confirmSubmitTest : () => testNav(1);
+}
+
+function selectAnswer(optIdx) {
+  if (testState.submitted) return;
+  testState.answers[testState.current] = optIdx;
+  renderTestQuestion();
+}
+
+function testNav(dir) {
+  const next = testState.current + dir;
+  if (next < 0 || next >= testState.questions.length) return;
+  testState.current = next;
+  renderTestQuestion();
+}
+
+function markForReview() {
+  testState.marked[testState.current] = !testState.marked[testState.current];
+  renderTestQuestion();
+}
+
+function updateNavGrid() {
+  const { questions, answers, marked, current } = testState;
+  const grid = document.getElementById('qNavGrid');
+  if (!grid) return;
+  grid.innerHTML = questions.map((_, i) => `
+    <div class="q-dot ${answers[i]!==null?'answered':''} ${marked[i]?'marked':''} ${i===current?'current':''}"
+      onclick="jumpToQ(${i})">${i+1}</div>`).join('');
+}
+
+function updateProgressSummary() {
+  const answered = testState.answers.filter(a => a !== null).length;
+  const marked = testState.marked.filter(Boolean).length;
+  const total = testState.questions.length;
+  const el = document.getElementById('testProgressSummary');
+  if (el) el.innerHTML = `
+    <div style="display:flex;flex-direction:column;gap:4px">
+      <div>✅ Answered: <strong>${answered}/${total}</strong></div>
+      <div>⬜ Unanswered: <strong>${total-answered}</strong></div>
+      <div>🚩 Marked: <strong>${marked}</strong></div>
+    </div>`;
+}
+
+function jumpToQ(i) {
+  testState.current = i;
+  renderTestQuestion();
+}
+
+function startTimer() {
+  clearInterval(testState.timerInterval);
+  testState.timerInterval = setInterval(() => {
+    testState.timerSeconds--;
+    const el = document.getElementById('testTimer');
+    if (!el) { clearInterval(testState.timerInterval); return; }
+    const m = Math.floor(testState.timerSeconds/60);
+    const s = testState.timerSeconds%60;
+    el.textContent = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+    el.className = 'test-timer' + (testState.timerSeconds<300?' warning':'') + (testState.timerSeconds<60?' critical':'');
+    if (testState.timerSeconds <= 0) { clearInterval(testState.timerInterval); submitTest(true); }
+  }, 1000);
+}
+
+function stopTest() {
+  clearInterval(testState.timerInterval);
+}
+
+async function confirmSubmitTest() {
+  const answered = testState.answers.filter(a => a !== null).length;
+  const total = testState.questions.length;
+  const unanswered = total - answered;
+  if (unanswered > 0) {
+    showConfirm(`You have ${unanswered} unanswered question${unanswered!==1?'s':''}. Submit anyway?`, () => submitTest(false), 'Submit Anyway', 'Unanswered Questions', '⚠️', 'btn-danger');
+  } else submitTest(false);
+}
+
+async function submitTest(autoSubmit = false) {
+  if (testState.submitted) return;
+  testState.submitted = true;
+  stopTest();
+
+  const { questions, answers, startTime, set, module: mod } = testState;
+  const timeTaken = Math.round((Date.now() - startTime) / 1000);
+  let correct = 0, wrong = 0, skipped = 0;
+  const reviewData = [];
+
+  questions.forEach((q, i) => {
+    const userAns = answers[i];
+    const opts = typeof q.opts === 'string' ? JSON.parse(q.opts||'[]') : (q.opts||[]);
+    if (userAns === null) { skipped++; reviewData.push({...q, userAns: null, isCorrect: false}); }
+    else if (userAns === q.ans) { correct++; reviewData.push({...q, userAns, isCorrect: true}); }
+    else { wrong++; reviewData.push({...q, userAns, isCorrect: false}); }
+  });
+
+  const total = questions.length;
+  const pct = Math.round((correct/total)*100);
+
+  // Compute adaptive difficulty reached
+  const diffReached = pct >= 80 ? 'hard' : pct >= 50 ? 'medium' : 'easy';
+
+  // Save score
+  const scoreId = `SC_${Date.now()}_${Math.random().toString(36).slice(2,6)}`;
+  const attemptKey = `${currentUser.id}_${set.id}_${Date.now()}`;
+  const scoreRec = {
+    id: scoreId, studentId: currentUser.id, studentName: currentUser.name,
+    moduleId: mod.id, moduleName: mod.name, setId: set.id, setName: set.name,
+    pct, correct, wrong, total, timeTaken, diff: diffReached,
+    date: new Date().toISOString(), attemptKey
+  };
+  await SB.from('scores').insert(scoreRec);
+
+  // Save answers
+  const answerRecs = reviewData.map((q, i) => ({
+    attemptKey, studentId: currentUser.id, studentName: currentUser.name,
+    moduleId: mod.id, setId: set.id, date: new Date().toISOString(),
+    qId: q.id, topic: q.topic||'General', diff: q.diff||'easy',
+    isCorrect: q.isCorrect,
+    studentAns: q.userAns !== null ? (q.opts[q.userAns]||'') : null,
+    correctAns: q.opts[q.ans]||''
+  }));
+  await SB.from('answers').insert(answerRecs);
+
+  // Load scores cache for badge check
+  cache.scores.push(scoreRec);
+  const newBadges = checkNewBadges(currentUser.id);
+
+  // Show result
+  showResult({ scoreRec, reviewData, timeTaken, correct, wrong, skipped, total, pct, diffReached, newBadges });
+}
+
+function checkNewBadges(studentId) {
+  const stats = computeStudentStats(studentId);
+  return ACHIEVEMENTS.filter(a => a.check(stats));
+}
+
+function computeStudentStats(studentId) {
+  const myScores = cache.scores.filter(s => s.studentId === studentId);
+  if (!myScores.length) return { totalTests:0, maxPct:0, totalQs:0, rank:999, modulesCompleted:0, minTime:99999, highScoreCount:0, modulesAttempted:0, activeDays:0, fastAnswers:0 };
+  const totalTests = myScores.length;
+  const maxPct = Math.max(...myScores.map(s=>s.pct||0));
+  const totalQs = myScores.reduce((a,s)=>a+(s.total||0),0);
+  const highScoreCount = myScores.filter(s=>s.pct>=80).length;
+  const modulesAttempted = new Set(myScores.map(s=>s.moduleId)).size;
+  const minTime = Math.min(...myScores.map(s=>s.timeTaken||99999));
+
+  // Compute rank
+  const allStudentAvg = {};
+  cache.scores.forEach(s => {
+    if(!allStudentAvg[s.studentId])allStudentAvg[s.studentId]={total:0,count:0};
+    allStudentAvg[s.studentId].total+=(s.pct||0);
+    allStudentAvg[s.studentId].count++;
+  });
+  const sorted = Object.entries(allStudentAvg).sort((a,b)=>(b[1].total/b[1].count)-(a[1].total/a[1].count));
+  const rank = sorted.findIndex(([id])=>id===studentId)+1;
+
+  const activeDays = new Set(myScores.map(s=>s.date?.slice(0,10))).size;
+  return { totalTests, maxPct, totalQs, rank, modulesCompleted:0, minTime, highScoreCount, modulesAttempted, activeDays, fastAnswers:0 };
+}
+
+// ════════════════════════════════════════════════════════════════
+// RESULT PAGE
+// ════════════════════════════════════════════════════════════════
+function showResult({ scoreRec, reviewData, timeTaken, correct, wrong, skipped, total, pct, diffReached, newBadges }) {
+  showPage('resultPage');
+  const grade = pct>=90?'A+':pct>=80?'A':pct>=70?'B+':pct>=60?'B':pct>=50?'C':'F';
+
+  // Topic-wise analysis
+  const topicMap = {};
+  reviewData.forEach(q => {
+    const t = q.topic||'General';
+    if(!topicMap[t])topicMap[t]={correct:0,total:0};
+    topicMap[t].total++;
+    if(q.isCorrect)topicMap[t].correct++;
+  });
+  const topicHtml = Object.entries(topicMap).sort((a,b)=>a[1].correct/a[1].total-b[1].correct/b[1].total).map(([topic,data]) => {
+    const tPct = Math.round(data.correct/data.total*100);
+    return `
+      <div style="margin-bottom:10px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+          <span style="font-size:13px;font-weight:600">${topic}</span>
+          <span class="badge badge-${tPct>=60?'green':'red'}">${tPct}%</span>
+        </div>
+        <div style="height:6px;background:var(--bg3);border-radius:3px;overflow:hidden">
+          <div style="height:100%;width:${tPct}%;background:${tPct>=60?'var(--green)':'var(--red)'};border-radius:3px"></div>
+        </div>
+        <div style="font-size:11px;color:var(--text3);margin-top:2px">${data.correct}/${data.total} correct</div>
+      </div>`;
+  }).join('');
+
+  const content = document.getElementById('resultContent');
+  content.innerHTML = `
+    <div style="max-width:900px;margin:0 auto;padding-bottom:40px">
+      <!-- Hero -->
+      <div class="result-hero">
+        <div class="result-score-circle" style="--pct:${pct}%">
+          <div class="result-score-inner">
+            <div class="result-pct" style="color:${pct>=60?'var(--green)':'var(--red)'}">${pct}%</div>
+            <div class="result-grade">${grade}</div>
+          </div>
+        </div>
+        <h2 style="font-family:'Syne',sans-serif;font-size:24px;font-weight:800;margin-bottom:8px">
+          ${pct>=60?'🎉 Congratulations!':'📚 Keep Practicing!'}
+        </h2>
+        <p style="color:var(--text2)">${scoreRec.moduleName} · ${scoreRec.setName}</p>
+        ${newBadges.length?`<div style="margin-top:16px;display:flex;gap:8px;justify-content:center;flex-wrap:wrap">
+          ${newBadges.map(b=>`<div class="badge badge-yellow">🏅 ${b.icon} ${b.name} earned!</div>`).join('')}
+        </div>`:''}
+      </div>
+
+      <!-- Stats row -->
+      <div class="result-stats-row">
+        <div class="result-stat">
+          <div class="val" style="color:var(--green)">${correct}</div>
+          <div class="lbl">✓ Correct</div>
+        </div>
+        <div class="result-stat">
+          <div class="val" style="color:var(--red)">${wrong}</div>
+          <div class="lbl">✗ Wrong</div>
+        </div>
+        <div class="result-stat">
+          <div class="val" style="color:var(--text3)">${skipped}</div>
+          <div class="lbl">— Skipped</div>
+        </div>
+        <div class="result-stat">
+          <div class="val">${formatTime(timeTaken)}</div>
+          <div class="lbl">⏱ Time Taken</div>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:20px">
+        <!-- Topic analysis -->
+        <div class="card">
+          <div class="card-inner">
+            <div class="chart-title">📊 Topic-wise Analysis</div>
+            ${topicHtml || '<p style="color:var(--text2);font-size:13px">No topic data</p>'}
+          </div>
+        </div>
+        <!-- Performance chart -->
+        <div class="card">
+          <div class="card-inner">
+            <div class="chart-title">🎯 Performance Breakdown</div>
+            <canvas id="resultChart" height="220"></canvas>
+            <div style="margin-top:16px;padding:12px;background:var(--bg2);border-radius:var(--r2)">
+              <div style="font-size:12px;color:var(--text2);margin-bottom:4px">Difficulty Reached</div>
+              <span class="badge badge-${diffReached==='easy'?'green':diffReached==='hard'?'red':'yellow'}">${diffReached}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Review -->
+      <div class="card">
+        <div class="card-inner">
+          <div class="chart-title">📋 Question Review</div>
+          <div class="tab-bar">
+            <button class="tab-btn active" onclick="showReviewTab('all',this)">All (${total})</button>
+            <button class="tab-btn" onclick="showReviewTab('wrong',this)">Wrong (${wrong})</button>
+            <button class="tab-btn" onclick="showReviewTab('correct',this)">Correct (${correct})</button>
+            <button class="tab-btn" onclick="showReviewTab('skipped',this)">Skipped (${skipped})</button>
+          </div>
+          <div id="reviewList">
+            ${renderReviewList(reviewData, 'all')}
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+
+  window._reviewData = reviewData;
+
+  setTimeout(() => {
+    new Chart(document.getElementById('resultChart'), {
+      type:'doughnut',
+      data:{
+        labels:['Correct','Wrong','Skipped'],
+        datasets:[{data:[correct,wrong,skipped],backgroundColor:['rgba(34,197,94,0.8)','rgba(239,68,68,0.8)','rgba(107,117,160,0.5)'],borderWidth:0,borderRadius:4}]
+      },
+      options:{responsive:true,plugins:{legend:{labels:{color:'#9ba3c7',font:{size:12}}}}}
+    });
+  }, 100);
+}
+
+function renderReviewList(reviewData, filter) {
+  const filtered = filter==='all'?reviewData:filter==='wrong'?reviewData.filter(q=>!q.isCorrect&&q.userAns!==null):filter==='correct'?reviewData.filter(q=>q.isCorrect):reviewData.filter(q=>q.userAns===null);
+  const letters = ['A','B','C','D'];
+  return filtered.map((q, i) => {
+    const opts = typeof q.opts === 'string' ? JSON.parse(q.opts||'[]') : (q.opts||[]);
+    const cls = q.userAns===null?'skipped-q':q.isCorrect?'correct-q':'wrong-q';
+    return `
+      <div class="review-q ${cls}">
+        <div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:12px">
+          <span style="font-size:16px">${q.isCorrect?'✅':q.userAns===null?'⬜':'❌'}</span>
+          <div style="flex:1">
+            <div class="q-meta" style="margin-bottom:6px">
+              <span class="badge badge-${q.diff==='easy'?'green':q.diff==='hard'?'red':'yellow'}">${q.diff}</span>
+              <span class="badge badge-gray">${q.topic}</span>
+            </div>
+            <div style="font-size:14px;font-weight:500;line-height:1.5">${escHtml(q.q)}</div>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:6px">
+          ${opts.map((opt,oi) => {
+            let cls2 = '';
+            if(oi===q.ans)cls2='correct';
+            else if(oi===q.userAns&&!q.isCorrect)cls2='wrong';
+            return `<div class="opt-item ${cls2}" style="pointer-events:none;padding:8px 12px">
+              <div class="opt-letter">${letters[oi]||oi+1}</div>
+              <div class="opt-text" style="font-size:13px">${escHtml(opt)}</div>
+              ${oi===q.ans?'<span style="margin-left:auto;color:var(--green);font-size:12px">✓ Correct</span>':''}
+              ${oi===q.userAns&&!q.isCorrect?'<span style="margin-left:auto;color:var(--red);font-size:12px">Your answer</span>':''}
+            </div>`;
+          }).join('')}
+        </div>
+        ${q.explain?`<div class="explain-box"><strong>💡 Explanation:</strong> ${escHtml(q.explain)}</div>`:''}
+      </div>`;
+  }).join('') || `<div class="empty-state"><p>No ${filter} questions</p></div>`;
+}
+
+function showReviewTab(filter, btn) {
+  document.querySelectorAll('.tab-bar .tab-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('reviewList').innerHTML = renderReviewList(window._reviewData||[], filter);
+}
+
+async function goStudentDash() {
+  showPage('studentPage');
+  studentNav('modules');
+}
+
+// ════════════════════════════════════════════════════════════════
+// UTILITIES
+// ════════════════════════════════════════════════════════════════
+// ════════════════════════════════════════════════════════════════
+// MODULE STAR RATINGS
+// ════════════════════════════════════════════════════════════════
+
+// Ratings stored in localStorage as:
+// vnslabs_ratings = { studentId: { moduleId: stars } }
+function _ratingsStore() {
+  try { return JSON.parse(localStorage.getItem('vnslabs_ratings') || '{}'); }
+  catch { return {}; }
+}
+function _saveRatingsStore(store) {
+  localStorage.setItem('vnslabs_ratings', JSON.stringify(store));
+}
+
+function getModuleRating(moduleId) {
+  const store = _ratingsStore();
+  return store[currentUser?.id]?.[moduleId] || 0;
+}
+
+function getModuleAvgRating(moduleId) {
+  const store = _ratingsStore();
+  const ratings = Object.values(store)
+    .map(s => s[moduleId])
+    .filter(r => r > 0);
+  if (!ratings.length) return { avgRating: 0, ratingCount: 0 };
+  return {
+    avgRating: ratings.reduce((a,b) => a+b, 0) / ratings.length,
+    ratingCount: ratings.length
+  };
+}
+
+function rateModule(moduleId, stars) {
+  const store = _ratingsStore();
+  if (!store[currentUser.id]) store[currentUser.id] = {};
+  const prev = store[currentUser.id][moduleId] || 0;
+  // Toggle off if clicking same rating
+  store[currentUser.id][moduleId] = (prev === stars) ? 0 : stars;
+  _saveRatingsStore(store);
+
+  // Update stars visually
+  const newRating = store[currentUser.id][moduleId];
+  const group = document.getElementById('stars_' + moduleId);
+  if (group) {
+    group.querySelectorAll('.star').forEach((el, i) => {
+      el.classList.toggle('filled', i < newRating);
+    });
+  }
+
+  // Update avg display
+  const { avgRating, ratingCount } = getModuleAvgRating(moduleId);
+  const avgEl = group?.nextElementSibling;
+  if (avgEl) {
+    avgEl.innerHTML = avgRating > 0
+      ? `${avgRating.toFixed(1)} <span class="star-count">(${ratingCount})</span>`
+      : `<span style="font-style:italic">Rate this</span>`;
+  }
+
+  toast(newRating ? `Rated ${cache.modules.find(m=>m.id===moduleId)?.name} ${newRating}⭐` : 'Rating removed', 'success');
+}
+
+function previewStars(moduleId, hoverN) {
+  const group = document.getElementById('stars_' + moduleId);
+  if (!group) return;
+  group.querySelectorAll('.star').forEach((el, i) => {
+    el.classList.toggle('filled', i < hoverN);
+  });
+}
+
+function resetStars(moduleId) {
+  const myRating = getModuleRating(moduleId);
+  const group = document.getElementById('stars_' + moduleId);
+  if (!group) return;
+  group.querySelectorAll('.star').forEach((el, i) => {
+    el.classList.toggle('filled', i < myRating);
+  });
+}
+
+// ════════════════════════════════════════════════════════════════
+// Escape HTML so <class 'int'> renders as text, not invisible tags
+function escHtml(s) {
+  if (s == null) return '';
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length-1; i>0; i--) {
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
+
+function formatTime(s) {
+  if (!s) return '0:00';
+  const m = Math.floor(s/60), sec = s%60;
+  return `${m}:${String(sec).padStart(2,'0')}`;
+}
+
+function downloadFile(content, filename, type) {
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([content], {type}));
+  a.download = filename;
+  a.click();
+}
+
+function toast(msg, type='info') {
+  const icons = {success:'✅',error:'❌',info:'ℹ️'};
+  const el = document.createElement('div');
+  el.className = `toast ${type}`;
+  el.innerHTML = `<span>${icons[type]||'ℹ️'}</span><span>${msg}</span>`;
+  document.getElementById('toastContainer').appendChild(el);
+  setTimeout(() => el.remove(), 3500);
+}
+
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+function showConfirm(msg, onOk, btnLabel='Confirm', title='Confirm', icon='⚠️', btnClass='btn-danger') {
+  document.getElementById('confirmMsg').textContent = msg;
+  document.getElementById('confirmTitle').textContent = title;
+  document.getElementById('confirmIcon').textContent = icon;
+  const btn = document.getElementById('confirmOkBtn');
+  btn.textContent = btnLabel;
+  btn.className = `btn ${btnClass}`;
+  btn.onclick = () => { closeModal('modalConfirm'); onOk(); };
+  openModal('modalConfirm');
+}
+
+// ════════════════════════════════════════════════════════════════
+// INIT
+// ════════════════════════════════════════════════════════════════
+window.addEventListener('DOMContentLoaded', tryAutoConnect);
+</script>
+</body>
+</html>
